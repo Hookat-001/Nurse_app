@@ -1,110 +1,170 @@
 import streamlit as st
+import time
 
-# Cấu hình trang
-st.set_page_config(page_title="Nurse Path", page_icon="👩‍⚕️")
+# --- 1. CẤU HÌNH TRANG & GIAO DIỆN ---
+st.set_page_config(
+    page_title="Nurse Path App",
+    page_icon="👩‍⚕️",
+    layout="centered"
+)
 
-# Tiêu đề
-st.title("👩‍⚕️ NURSE PATH 
-\n Lộ Trình Nghề Nghiệp")
-st.write("Giải pháp giảm lo âu thất nghiệp cho sinh viên Điều dưỡng")
+# CSS tùy chỉnh để làm đẹp các khung nội dung (Card)
+st.markdown("""
+    <style>
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        border-radius: 4px 4px 0px 0px;
+        font-weight: 600;
+    }
+    .job-card {
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        background-color: #f9f9f9;
+        margin-bottom: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Tạo 4 Tab chức năng như thiết kế của bạn
-tab1, tab2, tab3, tab4 = st.tabs(["📊 Đánh giá", "📅 Lộ trình 90 ngày", "🏥 Việc làm", "👤 Hồ sơ"])
+# --- 2. HEADER ---
+st.title("👩‍⚕️ NURSE PATH")
+st.markdown("**Lộ trình nghề nghiệp & Giảm lo âu thất nghiệp cho sinh viên Điều dưỡng**")
+st.divider()
+
+# Tạo 4 Tab chính
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📊 Đánh giá Năng lực", 
+    "📅 Lộ trình 90 ngày", 
+    "🏥 Việc làm", 
+    "👤 Mentor & Hồ sơ"
+])
 
 # --- TAB 1: ĐÁNH GIÁ NĂNG LỰC ---
+# Logic dựa trên [cite: 29] và [cite: 38]
 with tab1:
     st.header("Kiểm tra mức độ sẵn sàng")
-    st.write("Chọn những kỹ năng bạn ĐÃ làm được:")
-    
-    # Danh sách kỹ năng dựa trên tài liệu [cite: 32, 36]
-    skills = {
-        "Tiêm tĩnh mạch / Lấy ven": False,
-        "Sơ cấp cứu cơ bản": False,
-        "Giao tiếp & CS người bệnh": False,
-        "Tin học văn phòng": False,
-        "Tiếng Anh chuyên ngành": False,
-        "Đã từng đi thực tập lâm sàng": False
-    }
+    st.write("Hãy chọn trung thực các kỹ năng bạn ĐÃ làm được:")
 
-    # Tạo checkbox
-    score = 0
-    total = len(skills)
+    # Phân nhóm kỹ năng để dễ nhìn hơn
+    col_a, col_b = st.columns(2)
     
-    # Hiển thị checkbox và tính điểm
-    selected_skills = []
-    for skill in skills.keys():
-        if st.checkbox(skill):
-            score += 1
-            selected_skills.append(skill)
-            
-    # Tính phần trăm 
+    with col_a:
+        st.subheader("Chuyên môn")
+        # Dựa trên [cite: 32]
+        s1 = st.checkbox("Tiêm tĩnh mạch / Lấy ven")
+        s2 = st.checkbox("Sơ cấp cứu cơ bản")
+        s3 = st.checkbox("Đã từng đi thực tập lâm sàng")
+        
+    with col_b:
+        st.subheader("Kỹ năng mềm & Chứng chỉ")
+        # Dựa trên [cite: 36]
+        s4 = st.checkbox("Giao tiếp & CS người bệnh")
+        s5 = st.checkbox("Tin học văn phòng")
+        s6 = st.checkbox("Tiếng Anh chuyên ngành")
+
+    # Tính toán điểm số
+    skills_list = [s1, s2, s3, s4, s5, s6]
+    score = sum(skills_list)
+    total = len(skills_list)
     percentage = int((score / total) * 100)
-    
-    st.divider()
-    st.subheader(f"Mức độ sẵn sàng của bạn: {percentage}%")
-    st.progress(percentage)
 
-    # Logic đưa ra lời khuyên [cite: 39]
+    st.divider()
+    
+    # Hiển thị kết quả sinh động bằng st.metric
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        st.metric(label="Điểm sẵn sàng", value=f"{percentage}%")
+    
+    with c2:
+        st.write("Tiến độ của bạn:")
+        st.progress(percentage)
+
+    # Logic lời khuyên [cite: 38, 39]
     if percentage < 50:
-        st.warning("⚠️ Bạn còn thiếu nhiều kỹ năng thực tế. Hãy qua Tab 'Lộ trình' để xem kế hoạch bổ sung ngay!")
+        st.error(f"⚠️ Mức độ: {percentage}% - Cần cố gắng nhiều!")
+        st.write("👉 Bạn đang thiếu kỹ năng thực tế. Hãy chuyển sang Tab **Lộ trình** để bắt đầu giai đoạn 1 ngay.")
     elif percentage < 80:
-        st.info("ℹ️ Tạm ổn, nhưng cần trau dồi thêm kỹ năng mũi nhọn.")
+        st.warning(f"ℹ️ Mức độ: {percentage}% - Khá ổn!")
+        st.write("👉 Bạn cần trau dồi thêm 1 kỹ năng mũi nhọn để cạnh tranh tốt hơn.")
     else:
-        st.success("✅ Tuyệt vời! Bạn đã sẵn sàng ứng tuyển.")
+        st.success(f"✅ Mức độ: {percentage}% - Tuyệt vời!")
+        st.write("👉 Hồ sơ của bạn rất mạnh. Hãy ửng tuyển ngay ở Tab **Việc làm**.")
+        if st.button("Nhận huy hiệu sẵn sàng 🏅"):
+            st.balloons()
 
 # --- TAB 2: LỘ TRÌNH 90 NGÀY ---
+# Logic dựa trên [cite: 20] và [cite: 40]
 with tab2:
     st.header("Kế hoạch hành động 90 ngày")
-    st.write("Làm theo từng tuần để giảm lo âu thất nghiệp [cite: 20]")
+    st.caption("Hoàn thành từng mục nhỏ để giảm bớt lo âu.")
 
     # Giai đoạn 1 [cite: 42]
-    with st.expander("Giai đoạn 1 (0-30 ngày): CHUẨN BỊ", expanded=True):
-        st.write("Mục tiêu: Hoàn thiện hồ sơ & Kỹ năng nền")
-        st.checkbox("Hoàn thiện CV 1 trang đúng ngành [cite: 45]")
-        st.checkbox("Xây dựng Portfolio (Ca bệnh tiêu biểu) [cite: 46]")
-        st.checkbox("Chọn 1 kỹ năng mũi nhọn để học thêm [cite: 50]")
-        st.info("💡 Mẹo: Xin nhận xét từ người hướng dẫn thực tập để cải thiện Portfolio.")
+    with st.expander("🌱 Giai đoạn 1 (0-30 ngày): CHUẨN BỊ", expanded=True):
+        st.markdown("### 🎯 Mục tiêu: Hoàn thiện hồ sơ")
+        c_1 = st.checkbox("Viết CV 1 trang đúng chuẩn ngành Y")
+        c_2 = st.checkbox("Soạn Portfolio (Các ca bệnh tiêu biểu)") # [cite: 46]
+        c_3 = st.checkbox("Học thêm 1 kỹ năng mũi nhọn") # [cite: 50]
+        
+        if c_1 and c_2 and c_3:
+            st.success("Tuyệt vời! Bạn đã xong giai đoạn khởi động.")
 
     # Giai đoạn 2 [cite: 57]
-    with st.expander("Giai đoạn 2 (31-60 ngày): TIẾP CẬN"):
-        st.write("Mục tiêu: Kết nối & Luyện phỏng vấn")
-        st.checkbox("Xin việc tại nơi thực tập cũ [cite: 58]")
-        st.checkbox("Luyện tập trả lời phỏng vấn (Giới thiệu, Tình huống) [cite: 59]")
-        st.checkbox("Tìm hiểu về Đạo đức nghề nghiệp [cite: 62]")
+    with st.expander("🚀 Giai đoạn 2 (31-60 ngày): TIẾP CẬN"):
+        st.markdown("### 🎯 Mục tiêu: Kết nối & Phỏng vấn")
+        st.checkbox("Liên hệ lại nơi thực tập cũ để xin việc") # [cite: 58]
+        st.checkbox("Luyện bộ câu hỏi phỏng vấn (Tình huống, Đạo đức)") # [cite: 59]
+        st.checkbox("Tham gia các hội nhóm tuyển dụng điều dưỡng")
 
     # Giai đoạn 3 [cite: 65]
-    with st.expander("Giai đoạn 3 (61-90 ngày): ỔN ĐỊNH"):
-        st.write("Mục tiêu: Ứng tuyển thực tế")
-        st.checkbox("Gửi hồ sơ đến các Bệnh viện/Phòng khám [cite: 69]")
+    with st.expander("⭐ Giai đoạn 3 (61-90 ngày): ỔN ĐỊNH"):
+        st.markdown("### 🎯 Mục tiêu: Ứng tuyển thực tế")
+        st.checkbox("Gửi hồ sơ đến 5 Bệnh viện/Phòng khám") # 
         st.checkbox("Đi phỏng vấn thực tế")
-        st.checkbox("Điều chỉnh hồ sơ nếu chưa đạt [cite: 67]")
+        st.checkbox("Điều chỉnh lại CV sau mỗi lần phỏng vấn") # [cite: 67]
 
 # --- TAB 3: VIỆC LÀM PHÙ HỢP ---
+# Logic dựa trên [cite: 69, 70]
 with tab3:
-    st.header("Việc làm gợi ý cho sinh viên mới")
-    st.write("Nơi chấp nhận sinh viên chưa có nhiều kinh nghiệm [cite: 70]")
-    
-    # Giả lập danh sách việc làm giống hình vẽ
+    st.header("Cơ hội việc làm cho sinh viên mới")
+    st.info("Danh sách này ưu tiên các nơi chấp nhận đào tạo lại.")
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
-        st.success("🏥 Bệnh viện Quận A")
-        st.write("**Vị trí:** Điều dưỡng đa khoa")
-        st.write("**Yêu cầu:** Tốt nghiệp CĐ/ĐH, nhanh nhẹn.")
-        st.button("Ứng tuyển ngay", key="btn1")
+        with st.container(border=True):
+            st.markdown("### 🏥 Bệnh viện Quận A")
+            st.markdown("**Vị trí:** Điều dưỡng Đa khoa")
+            st.markdown("📍 **Khu vực:** TP.HCM")
+            st.markdown("💰 **Lương:** Thỏa thuận")
+            st.caption("Yêu cầu: Tốt nghiệp CĐ/ĐH, nhanh nhẹn.")
+            if st.button("Ứng tuyển BV A"):
+                st.toast("Đã lưu hồ sơ ứng tuyển!")
 
     with col2:
-        st.info("🏥 Phòng khám Tư nhân B")
-        st.write("**Vị trí:** Điều dưỡng chăm sóc tại nhà")
-        st.write("**Yêu cầu:** Có xe máy, chịu khó.")
-        st.button("Ứng tuyển ngay", key="btn2")
+        with st.container(border=True):
+            st.markdown("### 🏥 Phòng khám Tư nhân B")
+            st.markdown("**Vị trí:** Chăm sóc tại nhà")
+            st.markdown("📍 **Khu vực:** Hà Nội")
+            st.markdown("💰 **Lương:** 8 - 10 triệu")
+            st.caption("Yêu cầu: Có xe máy, chịu khó.")
+            if st.button("Ứng tuyển PK B"):
+                st.toast("Đã lưu hồ sơ ứng tuyển!")
 
 # --- TAB 4: HỒ SƠ & MENTOR ---
+# Logic dựa trên [cite: 91, 92]
 with tab4:
-    st.header("Kết nối Mentor")
-    st.write("Hỏi đáp online với chuyên gia [cite: 91]")
-    
-    text_question = st.text_area("Đặt câu hỏi cho Mentor:")
-    if st.button("Gửi câu hỏi"):
-        st.success("Câu hỏi đã được gửi! Chuyên gia sẽ trả lời trong 24h.")
+    st.header("Kết nối Chuyên gia")
+    st.write("Đặt câu hỏi để được giải đáp online mà không cần đi xa.")
 
+    with st.form("mentor_form"):
+        st.text_input("Họ tên của bạn:")
+        topic = st.selectbox("Chủ đề bạn quan tâm:", ["Sửa CV", "Kỹ năng phỏng vấn", "Chuyên môn lâm sàng"])
+        question = st.text_area("Nội dung câu hỏi:")
+        
+        submitted = st.form_submit_button("Gửi câu hỏi")
+        if submitted:
+            st.success(f"Đã gửi câu hỏi về chủ đề '{topic}'! Mentor sẽ trả lời trong 24h.")
