@@ -8,7 +8,25 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
+# --- ẨN LINK GITHUB & MENU MẶC ĐỊNH ---
+st.markdown("""
+    <style>
+    /* Ẩn nút Deploy và Menu hamburger (3 dấu gạch) ở góc phải */
+    .stAppDeployButton {display: none;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    
+    /* Ẩn Header mặc định (nơi chứa các nút đó) */
+    header {visibility: hidden !important;}
+    
+    /* Ẩn chân trang "Made with Streamlit" nếu muốn */
+    footer {visibility: hidden !important;}
+    
+    /* Kéo giao diện lên cao hơn vì đã ẩn header */
+    .block-container {
+        padding-top: 1rem !important; 
+    }
+    </style>
+""", unsafe_allow_html=True)
 # CSS Tùy chỉnh làm đẹp giao diện
 st.markdown("""
     <style>
@@ -178,7 +196,7 @@ with tab1:
 
 # --- TAB 2: LỘ TRÌNH (CÓ THANH TIẾN ĐỘ) ---
 with tab2:
-    st.header("📅 Lộ trình Cá nhân hóa")
+    st.header("📅 Lộ trình 90 ngày")
     st.write("Kế hoạch hành động từng bước để giảm lo âu.")
 
     # TÍNH TOÁN TIẾN ĐỘ LỘ TRÌNH
@@ -314,3 +332,4 @@ with tab5:
         if st.button("Gửi Góp ý"):
             st.balloons()
             st.success("Cảm ơn bạn!")
+
