@@ -32,7 +32,7 @@ if st.session_state.show_splash:
     
     # ⚠️ Đảm bảo file ảnh 'image_8a6388.jpg' nằm cùng thư mục với app.py
     try:
-        img_base64 = get_base64_of_bin_file("image_8a6388.jpg")
+        img_base64 = get_base64_of_bin_file("z7434843704046_810c2c91c80bba353a689637e23727d7.jpg")
         
         # CSS ĐẶC BIỆT:
         # 1. Đặt ảnh làm nền, căn giữa.
@@ -325,3 +325,4 @@ with tab5:
     st.header("💬 Mentor")
     st.text_area("Đặt câu hỏi cho chuyên gia:")
     st.button("Gửi câu hỏi")
+
