@@ -31,7 +31,7 @@ if st.session_state.show_splash:
     
     try:
         # ⚠️ CHÚ Ý: File ảnh phải nằm cùng thư mục với app.py
-        img_base64 = get_base64_of_bin_file("image_8a6388.jpg")
+        img_base64 = get_base64_of_bin_file("z7434843704046_810c2c91c80bba353a689637e23727d7.jpg")
         
         st.markdown(f"""
             <style>
@@ -335,3 +335,4 @@ with tab5:
         st.slider("Dễ dùng không?", 1, 5, 5)
         st.radio("Giảm lo âu không?", ["Có", "Không"])
         st.button("Gửi Góp ý")
+
