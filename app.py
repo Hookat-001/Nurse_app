@@ -10,8 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 2. HÀM XỬ LÝ ẢNH NỀN (BASE64) ---
-# Hàm này giúp đưa ảnh từ máy tính lên làm nền web
+# --- 2. HÀM XỬ LÝ ẢNH NỀN ---
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
@@ -26,112 +25,103 @@ if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================================================
-# PHẦN 1: TRANG CHÀO (SPLASH SCREEN) - GIAO DIỆN KHUNG ẢNH
+# PHẦN 1: TRANG CHÀO (SPLASH SCREEN) - NÚT Ở CHÍNH GIỮA
 # =========================================================
 if st.session_state.show_splash:
     
-    # ⚠️ Đảm bảo file ảnh 'image_8a6388.jpg' nằm cùng thư mục với app.py
     try:
-        img_base64 = get_base64_of_bin_file("z7434843704046_810c2c91c80bba353a689637e23727d7.jpg")
+        # ⚠️ CHÚ Ý: File ảnh phải nằm cùng thư mục với app.py
+        img_base64 = get_base64_of_bin_file("image_8a6388.jpg")
         
-        # CSS ĐẶC BIỆT:
-        # 1. Đặt ảnh làm nền, căn giữa.
-        # 2. Biến nút bấm thành chữ to đẹp nằm giữa màn hình.
         st.markdown(f"""
             <style>
-            /* Ẩn header/footer mặc định của Streamlit cho đẹp */
+            /* Ẩn mọi thứ mặc định của Streamlit */
             [data-testid="stHeader"] {{visibility: hidden;}}
+            .stAppDeployButton {{display: none;}}
+            [data-testid="stSidebar"] {{display: none;}}
             
-            /* Thiết lập ảnh nền */
+            /* Thiết lập ảnh nền Full màn hình */
             .stApp {{
                 background-image: url("data:image/jpg;base64,{img_base64}");
-                background-size: contain; /* Hoặc cover nếu muốn tràn màn hình */
+                background-size: cover; /* Ảnh phủ kín toàn màn hình */
                 background-position: center;
                 background-repeat: no-repeat;
-                background-color: #ffffff; /* Màu nền trắng cho phần thừa */
             }}
             
-            /* Căn chỉnh nút bấm vào giữa màn hình (tương đối) */
-            .stButton {{
-                display: flex;
-                justify_content: center;
-                align-items: center;
-                height: 60vh; /* Chiều cao vùng bấm */
-            }}
-            
-            /* Biến hóa nút bấm thường thành Chữ tiêu đề đẹp */
-            .stButton > button {{
-                background-color: rgba(255, 255, 255, 0.8) !important; /* Nền trắng mờ nhẹ */
+            /* CĂN GIỮA NÚT BẤM TUYỆT ĐỐI */
+            /* Tìm div chứa nút bấm đầu tiên và ghim nó vào giữa */
+            div.stButton > button:first-child {{
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* Kỹ thuật căn giữa chuẩn xác */
+                
+                /* Trang trí nút bấm cho đẹp */
+                background-color: rgba(255, 255, 255, 0.95) !important;
                 color: #00ADB5 !important;
-                font-size: 50px !important;
+                font-size: 40px !important; /* Chữ to */
                 font-weight: 900 !important;
                 border: 4px solid #00ADB5 !important;
-                border-radius: 20px !important;
-                padding: 20px 60px !important;
-                box-shadow: 0px 4px 15px rgba(0,0,0,0.2) !important;
+                border-radius: 50px !important;
+                padding: 30px 60px !important;
+                box-shadow: 0px 10px 30px rgba(0,0,0,0.3) !important;
+                z-index: 9999;
                 transition: all 0.3s ease;
             }}
             
-            /* Hiệu ứng khi di chuột vào */
-            .stButton > button:hover {{
-                transform: scale(1.1);
+            /* Hiệu ứng khi di chuột vào nút */
+            div.stButton > button:first-child:hover {{
+                transform: translate(-50%, -50%) scale(1.1); /* Phóng to nhẹ */
                 color: #ff4b4b !important;
                 border-color: #ff4b4b !important;
+                box-shadow: 0px 15px 40px rgba(0,0,0,0.4) !important;
                 cursor: pointer;
-            }}
-            
-            /* Dòng chữ nhỏ hướng dẫn bên dưới */
-            .click-hint {{
-                text-align: center;
-                color: #555;
-                font-size: 18px;
-                margin-top: -50px;
-                font-weight: bold;
-                animation: blink 2s infinite;
-            }}
-            
-            @keyframes blink {{
-                0% {{opacity: 1;}}
-                50% {{opacity: 0.5;}}
-                100% {{opacity: 1;}}
             }}
             </style>
         """, unsafe_allow_html=True)
         
     except Exception as e:
-        st.error("⚠️ Không tìm thấy file ảnh 'image_8a6388.jpg'. Hãy upload ảnh lên GitHub hoặc để cùng thư mục!")
+        st.error("⚠️ Lỗi: Không tìm thấy file ảnh 'image_8a6388.jpg'. Hãy đảm bảo file ảnh nằm cùng thư mục với file code này!")
         st.stop()
 
-    # --- NÚT BẤM CHÍNH ---
-    # Chúng ta tạo 3 cột để nút nằm giữa
-    c1, c2, c3 = st.columns([1, 4, 1])
-    
-    with c2:
-        st.write("") # Khoảng trống đệm phía trên
-        st.write("") 
-        st.write("") 
-        
-        # Nút bấm chính là TÊN APP
-        if st.button("NURSE PATH 🚀"):
-            st.session_state.show_splash = False
-            st.rerun()
-            
-        st.markdown('<p class="click-hint">👆 Bấm vào tên để bắt đầu</p>', unsafe_allow_html=True)
+    # Nút bấm duy nhất trên màn hình
+    # Khi bấm sẽ tắt splash screen và vào App
+    if st.button("NURSE PATH 🚀"):
+        st.session_state.show_splash = False
+        st.rerun()
 
+    # Dừng code để không hiện nội dung bên dưới khi đang ở trang chào
     st.stop()
 
 # =========================================================
 # PHẦN 2: ỨNG DỤNG CHÍNH (SAU KHI BẤM VÀO)
 # =========================================================
 
-# --- CSS CHO APP CHÍNH (Khôi phục giao diện chuẩn) ---
+# --- RESET CSS (Để các nút bên trong App không bị dính ra giữa màn hình) ---
 st.markdown("""
     <style>
-    /* Hiện lại header nhưng ẩn nút deploy */
+    /* Hiện lại các thành phần mặc định */
     [data-testid="stHeader"] {visibility: visible;}
-    .stAppDeployButton {display: none;}
+    [data-testid="stSidebar"] {display: block;}
+    .stAppDeployButton {display: none;} /* Vẫn ẩn nút deploy */
     
-    /* CSS Tùy chỉnh các tab và card */
+    /* Reset lại nền về màu trắng */
+    .stApp {
+        background-image: none;
+        background-color: white;
+    }
+    
+    /* Reset lại nút bấm về mặc định */
+    div.stButton > button:first-child {
+        position: static;
+        transform: none;
+        font-size: 1rem !important;
+        padding: 0.25rem 0.75rem !important;
+        border-radius: 0.5rem !important;
+        box-shadow: none !important;
+    }
+    
+    /* CSS Tùy chỉnh các tab và card (Giữ nguyên) */
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
     .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
     .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
@@ -139,9 +129,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- MÀN HÌNH ĐĂNG NHẬP / NHẬN CÔNG CỤ ---
+# --- MÀN HÌNH ĐĂNG KÝ / NHẬN CÔNG CỤ ---
 if not st.session_state.logged_in:
-    # Hiển thị sidebar trở lại
     st.set_page_config(initial_sidebar_state="expanded") 
 
     col1, col2 = st.columns([1, 1.5])
@@ -314,15 +303,35 @@ with tab3:
         st.info("💡 Mục tiêu: Đừng viết 'muốn học hỏi'. Hãy viết 'muốn đóng góp kỹ năng chăm sóc'.")
         st.download_button("📥 Tải Mẫu CV", data="Sample CV", file_name="CV_Mau.txt")
 
-# --- TAB 4 & 5 (GIỮ NGUYÊN NHƯ CŨ) ---
+# --- TAB 4 & 5 ---
 with tab4:
     st.header("🏥 Việc làm")
-    st.info("Chọn khu vực để xem việc làm phù hợp (Chức năng Demo)")
-    st.selectbox("Khu vực:", ["TP.HCM", "Hà Nội"])
-    st.button("Tìm kiếm ngay")
+    f_col1, f_col2 = st.columns(2)
+    with f_col1:
+        area = st.selectbox("Khu vực mong muốn:", ["TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ"])
+    with f_col2:
+        job_type = st.selectbox("Loại hình cơ sở:", ["Bệnh viện Công", "Bệnh viện Tư", "Phòng khám Đa khoa", "Chăm sóc tại nhà"])
+    
+    st.divider()
+    st.markdown(f"**Kết quả tìm kiếm: {job_type} tại {area}**")
+    st.markdown(f"""
+    <div class="job-card">
+        <h3>🏥 Điều dưỡng Đa khoa - {job_type} Quận 1</h3>
+        <p>📍 <b>Khu vực:</b> {area} | 💰 <b>Lương:</b> Thỏa thuận</p>
+        <p>✅ <b>Yêu cầu:</b> Tốt nghiệp CĐ/ĐH, Nhanh nhẹn, Chấp nhận đào tạo lại.</p>
+        <button style="background-color: #00ADB5; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Ứng tuyển ngay</button>
+    </div>
+    """, unsafe_allow_html=True)
 
 with tab5:
     st.header("💬 Mentor")
-    st.text_area("Đặt câu hỏi cho chuyên gia:")
-    st.button("Gửi câu hỏi")
-
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Hỏi đáp Chuyên gia")
+        st.text_area("Nhập câu hỏi của bạn:")
+        st.button("Gửi câu hỏi")
+    with c2:
+        st.subheader("Góp ý Thử nghiệm")
+        st.slider("Dễ dùng không?", 1, 5, 5)
+        st.radio("Giảm lo âu không?", ["Có", "Không"])
+        st.button("Gửi Góp ý")
