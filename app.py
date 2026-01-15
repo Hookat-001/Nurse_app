@@ -78,82 +78,157 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "💬 5. Mentor"
 ])
 
-# --- TAB 1: ĐÁNH GIÁ MỨC ĐỘ SẴN SÀNG (II.1) ---
+# --- TAB 1: ĐÁNH GIÁ (CẬP NHẬT CHO NGƯỜI "CHƯA CÓ GÌ") ---
 with tab1:
-    st.header("📊 Đánh giá mức độ sẵn sàng đi làm")
-    st.write("Trả lời ngắn gọn để biết bạn đang thiếu gì.")
+    st.header("📊 Đánh giá mức độ sẵn sàng")
+    st.info("💡 Lưu ý: Nếu bạn cảm thấy mình chưa có gì cả, đừng lo lắng. Hãy cứ chọn trung thực, App sẽ chỉ cho bạn cách bắt đầu từ con số 0.")
     
     with st.form("assessment_form"):
         c1, c2 = st.columns(2)
+        
+        # --- CỘT 1: CHUYÊN MÔN ---
         with c1:
-            st.subheader("Chuyên môn & Kỹ năng")
-            # Kiến thức chuyên môn & Kỹ năng thực hành
-            f1 = st.slider("Mức độ tự tin về Kiến thức chuyên môn:", 0, 10, 5)
-            f2 = st.multiselect("Kỹ năng thực hành thành thạo:", 
-                ["Tiêm truyền", "Đặt ống thông", "Thay băng", "CPR", "Sử dụng máy y tế"])
-            f3 = st.multiselect("Kỹ năng mềm:", 
-                ["Giao tiếp", "Làm việc nhóm", "Quản lý cảm xúc", "Giải quyết vấn đề"])
+            st.subheader("1. Kỹ năng & Chuyên môn")
             
+            # Câu hỏi 1: Kiến thức (Cho phép chọn mức 0)
+            score_knowledge = st.slider("Mức độ tự tin về Kiến thức lý thuyết (0 - Rỗng, 10 - Rất tự tin):", 0, 10, 3)
+            
+            # Câu hỏi 2: Kỹ năng thực hành (Thêm lựa chọn "Chưa có")
+            st.write("Kỹ năng thực hành bạn ĐÃ LÀM ĐƯỢC:")
+            has_no_skills = st.checkbox("❌ Tôi chưa thạo kỹ năng nào (Sẽ học sau)")
+            
+            if not has_no_skills:
+                skills = st.multiselect("Chọn kỹ năng cụ thể:", 
+                    ["Tiêm truyền / Lấy ven", "Đặt thông tiểu / Dạ dày", "Thay băng vết thương", "CPR (Cấp cứu)", "Sử dụng máy y tế"],
+                    label_visibility="collapsed")
+            else:
+                skills = [] # Trả về danh sách rỗng nếu chọn chưa có
+            
+            # Câu hỏi 3: Kỹ năng mềm
+            st.write("Kỹ năng mềm hiện có:")
+            soft_skills = st.multiselect("Chọn kỹ năng:", 
+                ["Giao tiếp bệnh nhân", "Làm việc nhóm", "Quản lý cảm xúc", "Giải quyết vấn đề"])
+
+        # --- CỘT 2: HỒ SƠ & TÂM LÝ ---
         with c2:
-            st.subheader("Hồ sơ & Tâm lý")
-            # Chứng chỉ & Tâm lý
-            f4 = st.multiselect("Chứng chỉ đã có:", ["Ngoại ngữ", "Tin học", "Chứng chỉ hành nghề", "Cấp cứu cơ bản"])
-            f5 = st.slider("Tâm lý/Sự tự tin khi nghĩ đến đi làm:", 0, 10, 4) # Mới thêm theo yêu cầu
+            st.subheader("2. Hồ sơ & Tâm lý")
             
-        submitted = st.form_submit_button("🔍 XEM KẾT QUẢ ĐÁNH GIÁ")
+            # Câu hỏi 4: Chứng chỉ (Thêm lựa chọn "Chưa có")
+            st.write("Các chứng chỉ đã có trong tay:")
+            has_no_certs = st.checkbox("❌ Tôi chưa có chứng chỉ nào cả")
+            
+            if not has_no_certs:
+                certs = st.multiselect("Chọn chứng chỉ:", 
+                    ["Tin học", "Ngoại ngữ", "Chứng chỉ hành nghề", "Chứng chỉ Cấp cứu"],
+                    label_visibility="collapsed")
+            else:
+                certs = []
+
+            # Câu hỏi 5: Tâm lý (Quan trọng)
+            score_mindset = st.slider("Tâm lý khi nghĩ đến việc đi xin việc (0 - Rất sợ, 10 - Rất sẵn sàng):", 0, 10, 2)
+            
+        submitted = st.form_submit_button("🔍 PHÂN TÍCH KẾT QUẢ")
 
     if submitted:
         st.divider()
-        # Logic đánh giá
-        score = f1 + len(f2) + len(f3) + len(f4) + f5
-        # Thang điểm giả định: Max khoảng 35
+        # --- LOGIC XỬ LÝ CHO NGƯỜI "CHƯA CÓ GÌ" ---
         
-        if score < 15:
-            status = "CHƯA SẴN SÀNG"
-            color = "red"
-            msg = "Bạn cần tập trung bổ sung kiến thức và kỹ năng ngay."
-        elif score < 25:
-            status = "TƯƠNG ĐỐI SẴN SÀNG"
-            color = "orange"
-            msg = "Bạn đã có nền tảng, cần trau dồi thêm tâm lý và hồ sơ."
-        else:
-            status = "SẴN SÀNG ĐI LÀM"
-            color = "green"
-            msg = "Tuyệt vời! Hãy chuẩn bị ứng tuyển ngay."
+        # Kiểm tra trường hợp đặc biệt: Không có gì cả
+        is_blank_sheet = (score_knowledge < 3) and (len(skills) == 0) and (len(certs) == 0)
+        
+        if is_blank_sheet:
+            st.markdown("""
+            <div style="background-color: #e3f2fd; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;">
+                <h3>👋 Chào bạn mới! Đừng hoang mang.</h3>
+                <p>Kết quả cho thấy bạn đang ở vạch xuất phát (Giai đoạn Khởi động).</p>
+                <p><b>Tin tốt là:</b> Bạn không cần phải sửa sai cái cũ, chỉ cần xây mới từ đầu. Lộ trình của bạn sẽ rất rõ ràng.</p>
+                <p>👉 <b>Lời khuyên:</b> Hãy quên việc "đi xin việc" đi. Mục tiêu 30 ngày tới của bạn chỉ là: <b>Học thuộc quy trình Tiêm & Viết xong cái CV nháp.</b></p>
+            </div>
+            """, unsafe_allow_html=True)
             
-        st.markdown(f"<h2 style='text-align: center; color: {color};'>{status}</h2>", unsafe_allow_html=True)
-        st.info(f"💡 {msg}")
-        st.write("👉 **App đã cá nhân hóa lộ trình cho bạn ở Tab 2.**")
+            st.warning("🎯 Hãy chuyển sang **Tab 2 (Lộ trình)** và bắt đầu ngay từ **Giai đoạn 1: CHUẨN BỊ**.")
+            
+        else:
+            # Logic tính điểm bình thường cho người đã có nền tảng
+            total_score = score_knowledge + len(skills) + len(soft_skills) + len(certs)*2 + score_mindset
+            
+            st.markdown("### 📢 KẾT QUẢ CỦA BẠN:")
+            if total_score < 15:
+                st.error("🔴 TRẠNG THÁI: CẦN BỔ SUNG GẤP")
+                st.write("Bạn có một chút nền tảng nhưng chưa đủ để cạnh tranh. Cần tập trung học kỹ năng thực hành.")
+            elif total_score < 28:
+                st.warning("🟠 TRẠNG THÁI: TƯƠNG ĐỐI SẴN SÀNG")
+                st.write("Bạn khá ổn. Hãy tập trung thi nốt chứng chỉ và luyện phỏng vấn.")
+            else:
+                st.success("🟢 TRẠNG THÁI: SẴN SÀNG ĐI LÀM")
+                st.write("Hồ sơ của bạn rất tốt. Hãy tự tin ứng tuyển.")
 
-# --- TAB 2: LỘ TRÌNH CÁ NHÂN HÓA (II.2) ---
+# --- TAB 2: LỘ TRÌNH CÁ NHÂN HÓA (CÓ THANH TIẾN ĐỘ) ---
 with tab2:
-    st.header("📅 Lộ trình nghề nghiệp cá nhân hóa")
-    st.write("Dựa trên kết quả đánh giá, dưới đây là kế hoạch 3 giai đoạn:")
+    st.header("📅 Lộ trình Cá nhân hóa")
+    [cite_start]st.write("Kế hoạch hành động từng bước để giảm lo âu[cite: 20].")
 
-    # Giai đoạn 1
+    # --- 1. TÍNH TOÁN TIẾN ĐỘ ---
+    # Danh sách các Key (định danh) của checkbox để theo dõi
+    tasks = [
+        "t1_1", "t1_2", "t1_3", "t1_4", # Giai đoạn 1
+        "t2_1", "t2_2", "t2_3", "t2_4", # Giai đoạn 2
+        "t3_1", "t3_2", "t3_3", "t3_4"  # Giai đoạn 3
+    ]
+    
+    # Đếm số task đã hoàn thành (Dựa vào session_state)
+    completed_count = 0
+    for task in tasks:
+        if st.session_state.get(task, False): # Nếu checkbox được tick
+            completed_count += 1
+            
+    # Tính phần trăm
+    total_tasks = len(tasks)
+    progress_percent = int((completed_count / total_tasks) * 100)
+    
+    # --- 2. HIỂN THỊ THANH TIẾN ĐỘ ---
+    st.divider()
+    col_prog1, col_prog2 = st.columns([3, 1])
+    
+    with col_prog1:
+        st.write(f"**Tiến độ tổng thể của bạn:** {completed_count}/{total_tasks} công việc")
+        st.progress(progress_percent)
+    
+    with col_prog2:
+        st.metric("Hoàn thành", f"{progress_percent}%")
+        
+    if progress_percent == 100:
+        st.success("🏆 CHÚC MỪNG! BẠN ĐÃ SẴN SÀNG 100% ĐỂ ĐI LÀM!")
+        st.balloons()
+    elif progress_percent >= 50:
+        st.info("🔥 Cố lên! Bạn đã đi được một nửa chặng đường.")
+    st.divider()
+
+    # --- 3. CHI TIẾT CÁC GIAI ĐOẠN ---
+    
+    # [cite_start]Giai đoạn 1 [cite: 42]
     with st.expander("🌱 Giai đoạn 1: CHUẨN BỊ (Nền tảng)", expanded=True):
-        st.markdown("### 🎯 Mục tiêu: Bổ sung cái còn thiếu")
-        st.checkbox("Ôn tập kiến thức chuyên môn còn hổng")
-        st.checkbox("Thực hành thành thạo các kỹ năng cơ bản (Tiêm, Thay băng...)")
-        st.checkbox("Rèn luyện kỹ năng mềm (Giao tiếp với bệnh nhân)")
-        st.checkbox("Chuẩn bị bản nháp Hồ sơ cá nhân")
+        st.markdown("### 🎯 Mục tiêu: Lấp lỗ hổng kiến thức")
+        st.checkbox("Ôn tập kiến thức chuyên khoa (Nội/Ngoại/Nhi...)", key="t1_1")
+        st.checkbox("Thực hành thành thạo các kỹ năng cơ bản", key="t1_2")
+        st.checkbox("Rèn luyện kỹ năng mềm (Giao tiếp)", key="t1_3")
+        st.checkbox("Chuẩn bị hồ sơ cá nhân (Nháp)", key="t1_4")
 
-    # Giai đoạn 2
-    with st.expander("🚀 Giai đoạn 2: TIẾP CẬN VIỆC LÀM (Đi sâu)"):
-        st.markdown("### 🎯 Mục tiêu: Chứng chỉ & Thực tế")
-        st.checkbox("Tìm hiểu quy trình bệnh viện nơi thực tập")
-        st.checkbox("Hoàn thành các Chứng chỉ bắt buộc & Nên có")
-        st.checkbox("Đăng ký 1 khóa học ngắn hạn mũi nhọn (có chứng chỉ)")
-        st.checkbox("Xin nhận xét từ người hướng dẫn để cải thiện")
+    # [cite_start]Giai đoạn 2 [cite: 57]
+    with st.expander("🚀 Giai đoạn 2: TIẾP CẬN VIỆC LÀM (Thực chiến)"):
+        st.markdown("### 🎯 Mục tiêu: Chứng chỉ & Môi trường thực tế")
+        st.checkbox("Tìm hiểu quy trình làm việc tại BV thực tập", key="t2_1")
+        st.checkbox("Hoàn tất các chứng chỉ bắt buộc (Tin học, Ngoại ngữ)", key="t2_2")
+        st.checkbox("Đăng ký 1 khóa học ngắn hạn mũi nhọn", key="t2_3")
+        st.checkbox("Xin nhận xét từ người hướng dẫn để cải thiện", key="t2_4")
 
-    # Giai đoạn 3
-    with st.expander("⭐ Giai đoạn 3: SẴN SÀNG ỨNG TUYỂN"):
-        st.markdown("### 🎯 Mục tiêu: Phỏng vấn & Việc làm")
-        st.checkbox("Hoàn thiện 100% Bộ hồ sơ xin việc")
-        st.checkbox("Luyện phỏng vấn (Bộ câu hỏi Điều dưỡng)")
-        st.checkbox("Giả định tình huống giao tiếp (Role-play)")
-        st.checkbox("Nộp hồ sơ vào nơi đã thực tập (Ưu tiên)")
-
+    # [cite_start]Giai đoạn 3 [cite: 65]
+    with st.expander("⭐ Giai đoạn 3: SẴN SÀNG ỨNG TUYỂN (Về đích)"):
+        st.markdown("### 🎯 Mục tiêu: Phỏng vấn & Có việc làm")
+        st.checkbox("Hoàn thiện CV & Hồ sơ xin việc (Sang Tab 3)", key="t3_1")
+        st.checkbox("Luyện bộ câu hỏi phỏng vấn Điều dưỡng", key="t3_2")
+        st.checkbox("Role-play: Xử lý tình huống bệnh nhân khó tính", key="t3_3")
+        st.checkbox("Nộp hồ sơ vào nơi đã thực tập (Ưu tiên)", key="t3_4")
 # --- TAB 3: GỢI Ý VIỆC LÀM (II.3) ---
 with tab3:
     st.header("🏥 Gợi ý việc làm phù hợp")
@@ -220,3 +295,4 @@ with tab5:
     text = st.text_area("Câu hỏi của bạn:")
     if st.button("Gửi câu hỏi"):
         st.success("Đã gửi! Mentor sẽ phản hồi qua Email bạn đăng ký.")
+
