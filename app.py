@@ -180,36 +180,70 @@ with tab1:
                 
             st.write(f"- 🏥 **Định hướng {career_goal}:** Hãy sang Tab 'Việc làm' để xem các yêu cầu cụ thể của vị trí này.")
 
-# --- TAB 2: LỘ TRÌNH 90 NGÀY ---
-# Logic dựa trên [cite: 20] và [cite: 40]
+# --- TAB 2: LỘ TRÌNH 90 NGÀY CHI TIẾT ---
 with tab2:
-    st.header("Kế hoạch hành động 90 ngày")
-    st.caption("Hoàn thành từng mục nhỏ để giảm bớt lo âu.")
+    st.header("📅 Kế hoạch hành động 90 ngày")
+    st.write("Lộ trình từng bước để chuyển từ Sinh viên -> Điều dưỡng chuyên nghiệp.")
 
-    # Giai đoạn 1 [cite: 42]
-    with st.expander("🌱 Giai đoạn 1 (0-30 ngày): CHUẨN BỊ", expanded=True):
-        st.markdown("### 🎯 Mục tiêu: Hoàn thiện hồ sơ")
-        c_1 = st.checkbox("Viết CV 1 trang đúng chuẩn ngành Y")
-        c_2 = st.checkbox("Soạn Portfolio (Các ca bệnh tiêu biểu)") # [cite: 46]
-        c_3 = st.checkbox("Học thêm 1 kỹ năng mũi nhọn") # [cite: 50]
+    # --- GIAI ĐOẠN 1 ---
+    with st.expander("🌱 Giai đoạn 1 (0-30 ngày): CHUẨN BỊ & NỀN TẢNG", expanded=True):
+        st.info("🎯 **Mục tiêu:** Hoàn thiện hồ sơ chuẩn hóa & Xác định kỹ năng mũi nhọn.")
         
-        if c_1 and c_2 and c_3:
-            st.success("Tuyệt vời! Bạn đã xong giai đoạn khởi động.")
+        st.markdown("#### 1. Bộ hồ sơ năng lực (Portfolio)")
+        st.checkbox("Hoàn thiện CV 1 trang (Đúng chuẩn ngành Y)")
+        st.checkbox("Xây dựng Portfolio chi tiết, bao gồm:")
+        st.markdown("""
+            * ✅ Các kỹ năng lâm sàng đã thực hiện thành thạo.
+            * ✅ Các ca bệnh tiêu biểu đã chăm sóc.
+            * ✅ Nhận xét/Đánh giá của người hướng dẫn (Preceptor).
+        """)
+        
+        st.markdown("#### 2. Nâng cấp chuyên môn")
+        st.checkbox("Chọn 1 kỹ năng mũi nhọn để học sâu (Khóa ngắn hạn hoặc Tự học có hướng dẫn)")
+        st.checkbox("Xin nhận xét thực tế khi đi thực tập để khắc phục điểm yếu ngay")
 
-    # Giai đoạn 2 [cite: 57]
-    with st.expander("🚀 Giai đoạn 2 (31-60 ngày): TIẾP CẬN"):
-        st.markdown("### 🎯 Mục tiêu: Kết nối & Phỏng vấn")
-        st.checkbox("Liên hệ lại nơi thực tập cũ để xin việc") # [cite: 58]
-        st.checkbox("Luyện bộ câu hỏi phỏng vấn (Tình huống, Đạo đức)") # [cite: 59]
-        st.checkbox("Tham gia các hội nhóm tuyển dụng điều dưỡng")
+        st.divider()
+        st.write("🔔 **Đánh giá Giai đoạn 1:**")
+        if st.button("📝 Làm bài Test củng cố Giai đoạn 1"):
+            st.success("Đang tải bài đánh giá mức độ hoàn thiện hồ sơ của bạn...")
+            # Logic: Hiển thị bài test hoặc popup tại đây
 
-    # Giai đoạn 3 [cite: 65]
-    with st.expander("⭐ Giai đoạn 3 (61-90 ngày): ỔN ĐỊNH"):
-        st.markdown("### 🎯 Mục tiêu: Ứng tuyển thực tế")
-        st.checkbox("Gửi hồ sơ đến 5 Bệnh viện/Phòng khám") # 
-        st.checkbox("Đi phỏng vấn thực tế")
-        st.checkbox("Điều chỉnh lại CV sau mỗi lần phỏng vấn") # [cite: 67]
+    # --- GIAI ĐOẠN 2 ---
+    with st.expander("🚀 Giai đoạn 2 (31-60 ngày): TIẾP CẬN VIỆC LÀM"):
+        st.info("🎯 **Mục tiêu:** Kết nối thực tế & Rèn luyện phỏng vấn.")
+        
+        st.markdown("#### 1. Tiếp cận nơi làm việc")
+        st.checkbox("Đặt vấn đề xin việc lại tại nơi đang thực tập (nếu phù hợp)")
+        
+        st.markdown("#### 2. Luyện tập Phỏng vấn (Role-play)")
+        st.caption("Hãy tự luyện tập các nội dung sau:")
+        st.checkbox("Giới thiệu bản thân ấn tượng trong 2 phút")
+        st.checkbox("Xử lý tình huống: Giao tiếp người bệnh & Chăm sóc người bệnh")
+        st.checkbox("Trả lời câu hỏi về Đạo đức nghề nghiệp (Có gợi ý)")
 
+        st.divider()
+        st.write("🔔 **Đánh giá Giai đoạn 2:**")
+        if st.button("📝 Làm bài Test kỹ năng Phỏng vấn"):
+            st.success("Hệ thống sẽ giả lập một buổi phỏng vấn thử cho bạn...")
+
+    # --- GIAI ĐOẠN 3 ---
+    with st.expander("⭐ Giai đoạn 3 (61-90 ngày): ỔN ĐỊNH & ỨNG TUYỂN"):
+        st.info("🎯 **Mục tiêu:** Tự tin ứng tuyển & Giảm lo âu.")
+        
+        st.markdown("#### 1. Thực chiến")
+        st.checkbox("Tự tin tham gia phỏng vấn thực tế")
+        st.checkbox("Ứng tuyển vào Bệnh viện/Phòng khám chấp nhận sinh viên mới")
+        
+        st.markdown("#### 2. Kiểm soát & Điều chỉnh")
+        st.checkbox("Đánh dấu tiến độ mỗi tuần (Track record)")
+        st.checkbox("Điều chỉnh lại Hồ sơ/Cách trả lời nếu chưa đạt")
+        st.caption("👉 Việc theo dõi tiến độ giúp bạn thấy mình đã làm được gì -> Giảm cảm giác lo âu.")
+
+        st.divider()
+        st.write("🔔 **Đánh giá Giai đoạn 3:**")
+        if st.button("📝 Làm bài Test Sẵn sàng đi làm"):
+            st.balloons()
+            st.success("Chúc mừng! Bạn đã hoàn thành lộ trình 90 ngày.")
 # --- TAB 3: VIỆC LÀM PHÙ HỢP ---
 # Logic dựa trên [cite: 69, 70]
 with tab3:
@@ -252,4 +286,5 @@ with tab4:
         submitted = st.form_submit_button("Gửi câu hỏi")
         if submitted:
             st.success(f"Đã gửi câu hỏi về chủ đề '{topic}'! Mentor sẽ trả lời trong 24h.")
+
 
