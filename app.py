@@ -4,7 +4,8 @@ import streamlit as st
 st.set_page_config(page_title="Nurse Path", page_icon="👩‍⚕️")
 
 # Tiêu đề
-st.title("👩‍⚕️ NURSE PATH - Lộ Trình Nghề Nghiệp")
+st.title("👩‍⚕️ NURSE PATH 
+\n Lộ Trình Nghề Nghiệp")
 st.write("Giải pháp giảm lo âu thất nghiệp cho sinh viên Điều dưỡng")
 
 # Tạo 4 Tab chức năng như thiết kế của bạn
@@ -106,3 +107,4 @@ with tab4:
     text_question = st.text_area("Đặt câu hỏi cho Mentor:")
     if st.button("Gửi câu hỏi"):
         st.success("Câu hỏi đã được gửi! Chuyên gia sẽ trả lời trong 24h.")
+
