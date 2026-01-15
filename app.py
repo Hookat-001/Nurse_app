@@ -1,63 +1,92 @@
 import streamlit as st
 import time
 
-# --- CẤU HÌNH TRANG ---
-st.set_page_config(page_title="Nurse Path App", page_icon="👩‍⚕️", layout="wide")
+# --- 1. CẤU HÌNH TRANG ---
+st.set_page_config(
+    page_title="Nurse Path App",
+    page_icon="👩‍⚕️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# --- QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP (Luồng III.1) ---
+# CSS Tùy chỉnh làm đẹp giao diện
+st.markdown("""
+    <style>
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
+    .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
+    .cv-tip { background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #43a047; margin-bottom: 10px; }
+    .highlight-box { border: 2px dashed #ff4b4b; padding: 15px; border-radius: 10px; margin-top: 20px; }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- 2. QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP ---
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
-# --- MÀN HÌNH ĐĂNG NHẬP / NHẬN CÔNG CỤ ---
+# --- MÀN HÌNH 1: ĐĂNG KÝ / NHẬN CÔNG CỤ ---
 if not st.session_state.logged_in:
-    st.title("👩‍⚕️ CHÀO MỪNG ĐẾN VỚI NURSE PATH")
-    st.info("Giải pháp giảm lo âu & Lộ trình nghề nghiệp cho sinh viên Điều dưỡng")
+    col1, col2 = st.columns([1, 1.5])
     
-    col1, col2 = st.columns([1, 1])
     with col1:
-        st.image("https://cdn-icons-png.flaticon.com/512/3063/3063176.png", width=200)
+        st.image("https://cdn-icons-png.flaticon.com/512/3063/3063176.png", width=250)
+        st.title("NURSE PATH")
+        st.subheader("Lộ trình nghề nghiệp Điều dưỡng")
+        st.info("✅ Giảm lo âu - Tăng tự tin - Sẵn sàng đi làm")
+    
     with col2:
+        st.write("") # Spacer
+        st.write("")
         with st.form("login_form"):
-            st.subheader("📝 Đăng ký nhận bộ công cụ")
+            st.markdown("### 📝 Đăng ký nhận Bộ công cụ")
+            st.write("Nhập thông tin để bắt đầu lộ trình cá nhân hóa của bạn.")
+            
             name = st.text_input("Họ và tên sinh viên:")
-            email = st.text_input("Gmail:")
+            email = st.text_input("Email (Gmail):")
             school = st.text_input("Trường đang theo học:")
             
-            if st.form_submit_button("🚀 NHẬN BỘ CÔNG CỤ & BẮT ĐẦU"):
+            if st.form_submit_button("🚀 NHẬN CÔNG CỤ & BẮT ĐẦU"):
                 if name and email:
                     st.session_state.logged_in = True
                     st.session_state.user_name = name
-                    st.rerun() # Tải lại trang để vào giao diện chính
+                    st.toast(f"Chào mừng {name}!", icon="🎉")
+                    time.sleep(1)
+                    st.rerun()
                 else:
-                    st.error("Vui lòng nhập tên và email!")
-    st.stop() # Dừng code tại đây nếu chưa đăng nhập
+                    st.error("Vui lòng nhập đầy đủ Tên và Email.")
+    st.stop() 
 
 # =========================================================
 # GIAO DIỆN CHÍNH (SAU KHI ĐĂNG NHẬP)
 # =========================================================
 
-# CSS Tùy chỉnh
-st.markdown("""
-    <style>
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
-    .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; }
-    .cv-tip { border-left: 5px solid #00c853; padding-left: 10px; background-color: #e8f5e9; margin: 10px 0; }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- SIDEBAR: THÔNG TIN & TÍNH KHẢ THI (IV) ---
+# --- SIDEBAR: THÔNG TIN & HƯỚNG DẪN ---
 with st.sidebar:
     st.title(f"Hi, {st.session_state.user_name} 👋")
     st.caption("Sinh viên Điều dưỡng")
+    
     st.divider()
     
-    st.header("💡 Vì sao App này hiệu quả?")
-    st.success("✅ Nhu cầu thực tế của sinh viên")
-    st.success("✅ Giao diện dễ sử dụng")
-    st.success("✅ Triển khai thử nghiệm ngay")
+    # Hướng dẫn sử dụng
+    st.header("📖 Hướng dẫn nhanh")
+    st.info("Mục tiêu: Dùng được ngay – không cần hướng dẫn dài")
+    st.markdown("""
+    1. 📥 Tải bộ công cụ
+    2. 📝 Tự đánh giá năng lực (Tab 1)
+    3. 📅 Thực hiện lộ trình 90 ngày (Tab 2)
+    4. ✅ Theo dõi tiến độ hàng tuần
+    5. 🔄 Điều chỉnh thực tế
+    """)
+    
+    st.divider()
+    st.header("💎 Giá trị cốt lõi")
+    st.markdown("""
+    * ✅ **Thực tế:** Sát nhu cầu tuyển dụng
+    * ✅ **Dễ dùng:** Giao diện thân thiện
+    * ✅ **Hiệu quả:** Giảm lo âu tức thì
+    """)
     
     st.divider()
     if st.button("Đăng xuất"):
@@ -65,23 +94,23 @@ with st.sidebar:
         st.rerun()
 
 # --- HEADER ---
-st.title("👩‍⚕️ LỘ TRÌNH NGHỀ NGHIỆP ĐIỀU DƯỠNG")
-st.markdown("**Giảm mơ hồ - Tăng tự nhận thức - Sẵn sàng đi làm**")
+st.title("👩‍⚕️ LỘ TRÌNH NGHỀ NGHIỆP CÁ NHÂN")
+st.markdown("**Từ Sinh viên mơ hồ ➡️ Ứng viên sáng giá**")
 st.divider()
 
-# 5 TAB CHỨC NĂNG (Thêm Tab CV riêng biệt)
+# 5 TAB CHỨC NĂNG
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 1. Đánh giá", 
     "📅 2. Lộ trình", 
-    "🏥 3. Việc làm", 
-    "📄 4. Hỗ trợ CV",
+    "📄 3. Hỗ trợ CV", 
+    "🏥 4. Việc làm", 
     "💬 5. Mentor"
 ])
 
-# --- TAB 1: ĐÁNH GIÁ (CẬP NHẬT CHO NGƯỜI "CHƯA CÓ GÌ") ---
+# --- TAB 1: ĐÁNH GIÁ MỨC ĐỘ SẴN SÀNG (Bản cập nhật cho người chưa có kinh nghiệm) ---
 with tab1:
-    st.header("📊 Đánh giá mức độ sẵn sàng")
-    st.info("💡 Lưu ý: Nếu bạn cảm thấy mình chưa có gì cả, đừng lo lắng. Hãy cứ chọn trung thực, App sẽ chỉ cho bạn cách bắt đầu từ con số 0.")
+    st.header("📊 Đánh giá mức độ sẵn sàng đi làm")
+    st.info("💡 Lưu ý: Nếu bạn cảm thấy mình chưa có gì cả, đừng lo lắng. Hãy chọn trung thực, App sẽ chỉ cho bạn cách bắt đầu từ con số 0.")
     
     with st.form("assessment_form"):
         c1, c2 = st.columns(2)
@@ -102,7 +131,7 @@ with tab1:
                     ["Tiêm truyền / Lấy ven", "Đặt thông tiểu / Dạ dày", "Thay băng vết thương", "CPR (Cấp cứu)", "Sử dụng máy y tế"],
                     label_visibility="collapsed")
             else:
-                skills = [] # Trả về danh sách rỗng nếu chọn chưa có
+                skills = [] 
             
             # Câu hỏi 3: Kỹ năng mềm
             st.write("Kỹ năng mềm hiện có:")
@@ -124,16 +153,14 @@ with tab1:
             else:
                 certs = []
 
-            # Câu hỏi 5: Tâm lý (Quan trọng)
+            # Câu hỏi 5: Tâm lý
             score_mindset = st.slider("Tâm lý khi nghĩ đến việc đi xin việc (0 - Rất sợ, 10 - Rất sẵn sàng):", 0, 10, 2)
             
         submitted = st.form_submit_button("🔍 PHÂN TÍCH KẾT QUẢ")
 
     if submitted:
         st.divider()
-        # --- LOGIC XỬ LÝ CHO NGƯỜI "CHƯA CÓ GÌ" ---
-        
-        # Kiểm tra trường hợp đặc biệt: Không có gì cả
+        # Logic tính điểm
         is_blank_sheet = (score_knowledge < 3) and (len(skills) == 0) and (len(certs) == 0)
         
         if is_blank_sheet:
@@ -141,59 +168,49 @@ with tab1:
             <div style="background-color: #e3f2fd; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;">
                 <h3>👋 Chào bạn mới! Đừng hoang mang.</h3>
                 <p>Kết quả cho thấy bạn đang ở vạch xuất phát (Giai đoạn Khởi động).</p>
-                <p><b>Tin tốt là:</b> Bạn không cần phải sửa sai cái cũ, chỉ cần xây mới từ đầu. Lộ trình của bạn sẽ rất rõ ràng.</p>
+                <p><b>Tin tốt là:</b> Bạn không cần phải sửa sai cái cũ, chỉ cần xây mới từ đầu.</p>
                 <p>👉 <b>Lời khuyên:</b> Hãy quên việc "đi xin việc" đi. Mục tiêu 30 ngày tới của bạn chỉ là: <b>Học thuộc quy trình Tiêm & Viết xong cái CV nháp.</b></p>
             </div>
             """, unsafe_allow_html=True)
-            
-            st.warning("🎯 Hãy chuyển sang **Tab 2 (Lộ trình)** và bắt đầu ngay từ **Giai đoạn 1: CHUẨN BỊ**.")
-            
+            st.warning("🎯 Hãy chuyển sang **Tab 2 (Lộ trình)** và bắt đầu ngay từ **Giai đoạn 1**.")
         else:
-            # Logic tính điểm bình thường cho người đã có nền tảng
             total_score = score_knowledge + len(skills) + len(soft_skills) + len(certs)*2 + score_mindset
             
             st.markdown("### 📢 KẾT QUẢ CỦA BẠN:")
             if total_score < 15:
-                st.error("🔴 TRẠNG THÁI: CẦN BỔ SUNG GẤP")
-                st.write("Bạn có một chút nền tảng nhưng chưa đủ để cạnh tranh. Cần tập trung học kỹ năng thực hành.")
+                st.error("🔴 MỨC ĐỘ: CHƯA SẴN SÀNG")
+                st.write("👉 Bạn đang thiếu nhiều kỹ năng nền tảng. Cần tập trung vào **Giai đoạn 1** của lộ trình.")
             elif total_score < 28:
-                st.warning("🟠 TRẠNG THÁI: TƯƠNG ĐỐI SẴN SÀNG")
-                st.write("Bạn khá ổn. Hãy tập trung thi nốt chứng chỉ và luyện phỏng vấn.")
+                st.warning("🟠 MỨC ĐỘ: TƯƠNG ĐỐI SẴN SÀNG")
+                st.write("👉 Bạn đã có nền tảng nhưng còn thiếu tự tin/chứng chỉ. Hãy sang **Tab 2 & 3** để hoàn thiện.")
             else:
-                st.success("🟢 TRẠNG THÁI: SẴN SÀNG ĐI LÀM")
-                st.write("Hồ sơ của bạn rất tốt. Hãy tự tin ứng tuyển.")
+                st.success("🟢 MỨC ĐỘ: SẴN SÀNG ĐI LÀM")
+                st.write("👉 Tuyệt vời! Bạn đã đủ điều kiện để ứng tuyển ngay tại **Tab 4**.")
 
-# --- TAB 2: LỘ TRÌNH CÁ NHÂN HÓA (CÓ THANH TIẾN ĐỘ) ---
+# --- TAB 2: LỘ TRÌNH (TÍCH HỢP THANH TIẾN ĐỘ %) ---
 with tab2:
     st.header("📅 Lộ trình Cá nhân hóa")
-    [cite_start]st.write("Kế hoạch hành động từng bước để giảm lo âu[cite: 20].")
+    st.write("Kế hoạch hành động từng bước để giảm lo âu.")
 
-    # --- 1. TÍNH TOÁN TIẾN ĐỘ ---
-    # Danh sách các Key (định danh) của checkbox để theo dõi
+    # --- TÍNH TOÁN TIẾN ĐỘ ---
     tasks = [
         "t1_1", "t1_2", "t1_3", "t1_4", # Giai đoạn 1
         "t2_1", "t2_2", "t2_3", "t2_4", # Giai đoạn 2
         "t3_1", "t3_2", "t3_3", "t3_4"  # Giai đoạn 3
     ]
-    
-    # Đếm số task đã hoàn thành (Dựa vào session_state)
     completed_count = 0
     for task in tasks:
-        if st.session_state.get(task, False): # Nếu checkbox được tick
+        if st.session_state.get(task, False):
             completed_count += 1
-            
-    # Tính phần trăm
     total_tasks = len(tasks)
     progress_percent = int((completed_count / total_tasks) * 100)
     
-    # --- 2. HIỂN THỊ THANH TIẾN ĐỘ ---
+    # --- HIỂN THỊ THANH TIẾN ĐỘ ---
     st.divider()
     col_prog1, col_prog2 = st.columns([3, 1])
-    
     with col_prog1:
-        st.write(f"**Tiến độ tổng thể của bạn:** {completed_count}/{total_tasks} công việc")
+        st.write(f"**Tiến độ tổng thể:** {completed_count}/{total_tasks} công việc")
         st.progress(progress_percent)
-    
     with col_prog2:
         st.metric("Hoàn thành", f"{progress_percent}%")
         
@@ -204,9 +221,7 @@ with tab2:
         st.info("🔥 Cố lên! Bạn đã đi được một nửa chặng đường.")
     st.divider()
 
-    # --- 3. CHI TIẾT CÁC GIAI ĐOẠN ---
-    
-    # [cite_start]Giai đoạn 1 [cite: 42]
+    # --- CHI TIẾT GIAI ĐOẠN ---
     with st.expander("🌱 Giai đoạn 1: CHUẨN BỊ (Nền tảng)", expanded=True):
         st.markdown("### 🎯 Mục tiêu: Lấp lỗ hổng kiến thức")
         st.checkbox("Ôn tập kiến thức chuyên khoa (Nội/Ngoại/Nhi...)", key="t1_1")
@@ -214,7 +229,6 @@ with tab2:
         st.checkbox("Rèn luyện kỹ năng mềm (Giao tiếp)", key="t1_3")
         st.checkbox("Chuẩn bị hồ sơ cá nhân (Nháp)", key="t1_4")
 
-    # [cite_start]Giai đoạn 2 [cite: 57]
     with st.expander("🚀 Giai đoạn 2: TIẾP CẬN VIỆC LÀM (Thực chiến)"):
         st.markdown("### 🎯 Mục tiêu: Chứng chỉ & Môi trường thực tế")
         st.checkbox("Tìm hiểu quy trình làm việc tại BV thực tập", key="t2_1")
@@ -222,77 +236,102 @@ with tab2:
         st.checkbox("Đăng ký 1 khóa học ngắn hạn mũi nhọn", key="t2_3")
         st.checkbox("Xin nhận xét từ người hướng dẫn để cải thiện", key="t2_4")
 
-    # [cite_start]Giai đoạn 3 [cite: 65]
     with st.expander("⭐ Giai đoạn 3: SẴN SÀNG ỨNG TUYỂN (Về đích)"):
         st.markdown("### 🎯 Mục tiêu: Phỏng vấn & Có việc làm")
         st.checkbox("Hoàn thiện CV & Hồ sơ xin việc (Sang Tab 3)", key="t3_1")
         st.checkbox("Luyện bộ câu hỏi phỏng vấn Điều dưỡng", key="t3_2")
         st.checkbox("Role-play: Xử lý tình huống bệnh nhân khó tính", key="t3_3")
         st.checkbox("Nộp hồ sơ vào nơi đã thực tập (Ưu tiên)", key="t3_4")
-# --- TAB 3: GỢI Ý VIỆC LÀM (II.3) ---
+
+# --- TAB 3: HỖ TRỢ CV & HỒ SƠ ---
 with tab3:
-    st.header("🏥 Gợi ý việc làm phù hợp")
-    st.write("Dành cho sinh viên mới tốt nghiệp, ít kinh nghiệm.")
+    st.header("📄 Trung tâm Hỗ trợ Hồ sơ")
+    st.write("Đừng để hồ sơ xấu làm mất cơ hội của bạn.")
+
+    col_cv1, col_cv2 = st.columns(2)
     
-    # Bộ lọc theo yêu cầu
-    c1, c2 = st.columns(2)
-    with c1:
+    with col_cv1:
+        st.subheader("✅ Checklist Giấy tờ Cần thiết")
+        st.caption("Đánh dấu vào những gì bạn đã có:")
+        st.checkbox("CV Điều dưỡng (đã chỉnh sửa kỹ)")
+        st.checkbox("Bằng tốt nghiệp / Giấy CNTN")
+        st.checkbox("Bảng điểm gốc")
+        st.checkbox("Chứng chỉ hành nghề (nếu có)")
+        st.checkbox("Giấy khám sức khỏe (trong 6 tháng)")
+        st.checkbox("Sơ yếu lý lịch (Công chứng)")
+        
+    with col_cv2:
+        st.subheader("✍️ Mẹo viết CV 'Ăn điểm'")
+        
+        with st.container():
+            st.markdown("""
+            <div class="cv-tip">
+            <b>Mục Tiêu Nghề Nghiệp:</b><br>
+            ❌ Đừng viết: "Muốn học hỏi kinh nghiệm."<br>
+            ✅ Hãy viết: "Mong muốn vận dụng kỹ năng CSNB để đóng góp cho khoa Nội, hướng tới trở thành Điều dưỡng trưởng trong 5 năm."
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("""
+            <div class="cv-tip">
+            <b>Kinh Nghiệm Làm Việc:</b><br>
+            Hãy liệt kê chi tiết các khoa đã thực tập. <br>
+            Ví dụ: <i>"Thực tập Khoa Cấp cứu (3 tháng): Thành thạo kỹ thuật ép tim, hỗ trợ đặt nội khí quản..."</i>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        st.download_button("📥 Tải Mẫu CV Điều Dưỡng (PDF)", data="Nội dung mẫu CV Điều dưỡng...", file_name="CV_Mau_DieuDuong.txt")
+
+# --- TAB 4: VIỆC LÀM ---
+with tab4:
+    st.header("🏥 Gợi ý Việc làm Phù hợp")
+    st.write("Dành cho sinh viên mới tốt nghiệp, chưa nhiều kinh nghiệm.")
+    
+    # Bộ lọc việc làm
+    f_col1, f_col2 = st.columns(2)
+    with f_col1:
         area = st.selectbox("Khu vực mong muốn:", ["TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ"])
-    with c2:
-        type_fac = st.selectbox("Loại hình cơ sở:", ["Bệnh viện Công", "Bệnh viện Tư nhân", "Phòng khám Đa khoa", "Chăm sóc tại nhà"])
+    with f_col2:
+        job_type = st.selectbox("Loại hình cơ sở:", ["Bệnh viện Công", "Bệnh viện Tư", "Phòng khám Đa khoa", "Chăm sóc tại nhà"])
     
     st.divider()
-    st.subheader(f"Kết quả cho: {type_fac} tại {area}")
+    st.markdown(f"**Kết quả tìm kiếm: {job_type} tại {area}**")
     
     # Giả lập kết quả
-    with st.container(border=True):
-        st.markdown(f"**Điều dưỡng Đa khoa - {type_fac} Quận 1**")
-        st.caption(f"📍 {area} | 💰 Thỏa thuận")
-        st.write("✅ Yêu cầu: Tốt nghiệp CĐ/ĐH, Chịu khó, Không yêu cầu kinh nghiệm.")
-        st.button("Ứng tuyển ngay", key="job1")
-
-# --- TAB 4: HỖ TRỢ CV & HỒ SƠ (II.4 - MỚI HOÀN TOÀN) ---
-with tab4:
-    st.header("📄 Hỗ trợ Hồ sơ Xin việc Chuẩn ngành")
-    st.write("Đừng để thiếu sót giấy tờ làm mất cơ hội của bạn.")
-
-    col_a, col_b = st.columns(2)
+    st.markdown(f"""
+    <div class="job-card">
+        <h3>🏥 Điều dưỡng Đa khoa - {job_type} Quận 1</h3>
+        <p>📍 <b>Khu vực:</b> {area} | 💰 <b>Lương:</b> Thỏa thuận</p>
+        <p>✅ <b>Yêu cầu:</b> Tốt nghiệp CĐ/ĐH, Nhanh nhẹn, Chấp nhận đào tạo lại.</p>
+        <button style="background-color: #00ADB5; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Ứng tuyển ngay</button>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col_a:
-        st.subheader("✅ Checklist Hồ sơ cần có")
-        st.write("Đánh dấu vào những gì bạn đã chuẩn bị xong:")
-        # Danh sách hồ sơ
-        st.checkbox("CV Điều dưỡng hoàn chỉnh")
-        st.checkbox("Bằng tốt nghiệp / Giấy xác nhận TN")
-        st.checkbox("Bảng điểm chi tiết")
-        st.checkbox("Chứng chỉ hành nghề/Ngoại ngữ/Tin học")
-        st.checkbox("Giấy khám sức khỏe (còn hạn 6 tháng)")
-        
-        st.divider()
-        st.info("💡 Mẹo: Nên photo công chứng sẵn 3-5 bộ để dùng dần.")
+    st.markdown(f"""
+    <div class="job-card">
+        <h3>💉 Điều dưỡng Chăm sóc tích cực (ICU)</h3>
+        <p>📍 <b>Khu vực:</b> {area} | 💰 <b>Lương:</b> 10 - 15 triệu</p>
+        <p>✅ <b>Yêu cầu:</b> Có chứng chỉ hành nghề, chịu được áp lực.</p>
+        <button style="background-color: #00ADB5; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Ứng tuyển ngay</button>
+    </div>
+    """, unsafe_allow_html=True)
 
-    with col_b:
-        st.subheader("✍️ Mẹo viết CV Điều dưỡng")
-        # Gợi ý câu chữ
-        with st.expander("Mục: Mục tiêu nghề nghiệp", expanded=True):
-            st.markdown("""
-            * **Nên:** 'Mong muốn áp dụng kiến thức điều dưỡng đa khoa để chăm sóc tốt nhất cho bệnh nhân tại BV...'
-            * **Không nên:** Viết chung chung 'Muốn học hỏi kinh nghiệm' (Nhà tuyển dụng cần người làm được việc).
-            """)
-        
-        with st.expander("Mục: Kinh nghiệm làm việc"):
-            st.markdown("""
-            * **Sinh viên mới:** Ghi rõ quá trình **Thực tập lâm sàng**.
-            * **Ví dụ:** 'Thực tập sinh khoa Nội - BV Chợ Rẫy (3 tháng): Thực hiện thành thạo lấy ven, thay băng, hỗ trợ bác sĩ...'
-            """)
-            
-        st.download_button("📥 Tải Mẫu CV Điều dưỡng Chuẩn", data="Mau_CV.pdf", file_name="Mau_CV_DieuDuong.pdf")
-
-# --- TAB 5: MENTOR (GIỮ LẠI ĐỂ TĂNG GIÁ TRỊ) ---
+# --- TAB 5: MENTOR & GÓP Ý ---
 with tab5:
-    st.header("💬 Kết nối Mentor")
-    st.write("Nếu bạn vẫn còn thắc mắc, hãy hỏi chuyên gia.")
-    text = st.text_area("Câu hỏi của bạn:")
-    if st.button("Gửi câu hỏi"):
-        st.success("Đã gửi! Mentor sẽ phản hồi qua Email bạn đăng ký.")
-
+    st.header("💬 Kết nối & Phản hồi")
+    
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Hỏi đáp Chuyên gia")
+        st.text_area("Nhập câu hỏi của bạn (về Phỏng vấn, Chuyên môn...):")
+        if st.button("Gửi câu hỏi"):
+            st.success("Đã gửi! Mentor sẽ phản hồi qua email.")
+            
+    with c2:
+        st.subheader("Góp ý Thử nghiệm")
+        st.write("Giúp chúng tôi hoàn thiện App:")
+        st.slider("Ứng dụng có DỄ DÙNG không?", 1, 5, 5)
+        st.radio("Ứng dụng có giúp GIẢM LO ÂU không?", ["Có", "Một chút", "Không"])
+        if st.button("Gửi Góp ý"):
+            st.balloons()
+            st.success("Cảm ơn đóng góp của bạn!")
