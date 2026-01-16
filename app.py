@@ -33,7 +33,7 @@ if 'user_name' not in st.session_state:
 if st.session_state.show_splash:
     
     # ⚠️ LƯU Ý: File ảnh 'image_8a6388.jpg' phải nằm cùng thư mục với file code này
-    img_base64 = get_base64_of_bin_file("image_8a6388.jpg")
+    img_base64 = get_base64_of_bin_file("z7434843704046_810c2c91c80bba353a689637e23727d7.jpg")
     
     if img_base64:
         bg_style = f"""
@@ -362,3 +362,4 @@ with tab5:
         if st.button("Gửi Góp ý"):
             st.balloons()
             st.success("Cảm ơn bạn!")
+
