@@ -28,12 +28,78 @@ if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================================================
+# PHẦN CSS QUAN TRỌNG: KHẮC PHỤC LỖI DARK MODE & LÀM ĐẸP
+# =========================================================
+st.markdown("""
+    <style>
+    /* 1. ÉP BUỘC TRÌNH DUYỆT DÙNG CHẾ ĐỘ SÁNG (Cực quan trọng cho Mobile) */
+    :root {
+        color-scheme: light !important;
+    }
+    
+    /* 2. Ép buộc màu chữ và màu nền toàn cục */
+    html, body, [class*="css"] {
+        background-color: #FFFFFF !important;
+        color: #000000 !important; /* Chữ đen tuyệt đối */
+    }
+    
+    /* 3. Xử lý Ô Nhập Liệu (Input) để không bị chữ trắng/nền trắng */
+    .stTextInput input, .stTextArea textarea {
+        color: #000000 !important;       /* Chữ khi gõ vào màu đen */
+        background-color: #ffffff !important; /* Nền ô màu trắng */
+        -webkit-text-fill-color: #000000 !important; /* Fix cho iPhone/Safari */
+        caret-color: #000000 !important; /* Dấu nháy màu đen */
+        border: 1px solid #ccc !important;
+    }
+    
+    /* 4. Xử lý Nhãn (Label) của ô nhập liệu */
+    .stTextInput label, .stTextArea label, .stSelectbox label {
+        color: #31333F !important;
+        font-weight: 600 !important;
+    }
+    
+    /* 5. Ẩn nút Deploy và Menu GitHub */
+    .stAppDeployButton {display: none;}
+    [data-testid="stToolbar"] {visibility: hidden;} 
+    [data-testid="stHeader"] {
+        visibility: visible !important;
+        background-color: rgba(0,0,0,0);
+        z-index: 1000;
+    }
+
+    /* 6. Sidebar trên mobile */
+    [data-testid="stSidebar"] { 
+        width: 300px !important;
+        background-color: #F0F2F6 !important; 
+    }
+    [data-testid="stSidebar"] * {
+        color: #000000 !important; /* Chữ trong sidebar màu đen */
+    }
+
+    /* 7. CSS làm đẹp khác (Card, Tab...) */
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
+    .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
+    .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
+    .job-card * { color: #000000 !important; } /* Chữ trong card màu đen */
+    
+    /* 8. Reset nút bấm thường */
+    div.stButton > button:first-child {
+        position: static;
+        transform: none;
+        width: auto !important;
+        display: inline-flex !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# =========================================================
 # PHẦN 1: TRANG CHÀO (SPLASH SCREEN)
 # =========================================================
 if st.session_state.show_splash:
     
-    # ⚠️ LƯU Ý: File ảnh 'image_8a6388.jpg' phải nằm cùng thư mục với file code này
-    img_base64 = get_base64_of_bin_file("z7434843704046_810c2c91c80bba353a689637e23727d7.jpg")
+    # Sử dụng tên file ảnh bạn vừa cung cấp
+    img_name = "z7434843704046_810c2c91c80bba353a689637e23727d7.jpg"
+    img_base64 = get_base64_of_bin_file(img_name)
     
     if img_base64:
         bg_style = f"""
@@ -43,52 +109,37 @@ if st.session_state.show_splash:
             background-repeat: no-repeat;
         """
     else:
-        # Dự phòng nếu không tìm thấy ảnh
         bg_style = "background-color: #ffffff;"
-        st.error("⚠️ Không tìm thấy ảnh 'image_8a6388.jpg'. Hãy kiểm tra lại thư mục!")
+        st.error(f"⚠️ Không tìm thấy ảnh '{img_name}'. Hãy kiểm tra lại thư mục!")
 
     st.markdown(f"""
         <style>
-        /* Ẩn giao diện mặc định */
-        [data-testid="stHeader"] {{visibility: hidden;}}
-        .stAppDeployButton {{display: none;}}
-        [data-testid="stSidebar"] {{display: none;}}
+        [data-testid="stHeader"] {{visibility: hidden !important;}}
+        [data-testid="stSidebar"] {{display: none !important;}}
         
-        /* Thiết lập ảnh nền */
         .stApp {{
             {bg_style}
         }}
         
-        /* CĂN GIỮA NÚT BẤM TUYỆT ĐỐI */
+        /* CĂN GIỮA NÚT BẤM SPLASH SCREEN */
         div.stButton > button:first-child {{
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            
-            /* Trang trí nút bấm */
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
             background-color: rgba(255, 255, 255, 0.95) !important;
             color: #00ADB5 !important;
-            font-size: 40px !important;
+            font-size: 35px !important;
             font-weight: 900 !important;
             border: 4px solid #00ADB5 !important;
             border-radius: 50px !important;
-            padding: 30px 60px !important;
+            padding: 20px 40px !important;
             box-shadow: 0px 10px 30px rgba(0,0,0,0.3) !important;
             z-index: 9999;
-            transition: all 0.3s ease;
-        }}
-        
-        div.stButton > button:first-child:hover {{
-            transform: translate(-50%, -50%) scale(1.1);
-            color: #ff4b4b !important;
-            border-color: #ff4b4b !important;
-            cursor: pointer;
         }}
         </style>
     """, unsafe_allow_html=True)
 
-    # Nút bấm duy nhất để vào App
     if st.button("NURSE PATH 🚀"):
         st.session_state.show_splash = False
         st.rerun()
@@ -96,58 +147,8 @@ if st.session_state.show_splash:
     st.stop()
 
 # =========================================================
-# PHẦN 2: ỨNG DỤNG CHÍNH (SAU KHI VÀO TRONG)
+# PHẦN 2: ỨNG DỤNG CHÍNH
 # =========================================================
-
-# --- CSS QUAN TRỌNG: CHỈNH MÀU NỀN & ẨN GITHUB ---
-st.markdown("""
-    <style>
-    /* 1. Ép buộc nền trắng và chữ đen (Sửa lỗi giao diện tối) */
-    .stApp {
-        background-image: none;
-        background-color: #FFFFFF !important;
-        color: #31333F !important;
-    }
-    
-    /* 2. Sửa lỗi ô nhập liệu bị đen thui */
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        color: #31333F !important;
-        background-color: #FFFFFF !important;
-        border: 1px solid #d6d6d8 !important;
-    }
-    
-    /* 3. Hiện lại Header (để có nút menu mobile) nhưng ẩn nút GitHub */
-    [data-testid="stHeader"] {
-        visibility: visible !important;
-        background-color: rgba(0,0,0,0);
-        z-index: 1000;
-    }
-    .stAppDeployButton {display: none;} /* <-- Chặn nút Deploy/GitHub */
-    [data-testid="stToolbar"] {visibility: hidden;} 
-    [data-testid="stDecoration"] {display: none;}
-
-    /* 4. Reset lại nút bấm (để không bị to đùng như trang chào) */
-    div.stButton > button:first-child {
-        position: static;
-        transform: none;
-        font-size: 1rem !important;
-        padding: 0.25rem 0.75rem !important;
-        border-radius: 0.5rem !important;
-        box-shadow: none !important;
-        width: auto !important;
-        display: inline-flex !important;
-    }
-    
-    /* 5. Sidebar trên mobile */
-    [data-testid="stSidebar"] { width: 300px !important; }
-
-    /* CSS làm đẹp Card và Tab */
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
-    .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
-    .cv-tip { background-color: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #43a047; margin-bottom: 10px; }
-    </style>
-""", unsafe_allow_html=True)
 
 # --- MÀN HÌNH ĐĂNG NHẬP ---
 if not st.session_state.logged_in:
@@ -167,6 +168,9 @@ if not st.session_state.logged_in:
             st.markdown("### 📝 Đăng ký nhận Bộ công cụ")
             st.write("Nhập thông tin để bắt đầu lộ trình cá nhân hóa của bạn.")
             
+            # CSS đặc biệt cho input form đăng nhập
+            st.markdown("""<style>input {color: black !important;}</style>""", unsafe_allow_html=True)
+
             name = st.text_input("Họ và tên sinh viên:")
             email = st.text_input("Email (Gmail):")
             school = st.text_input("Trường đang theo học:")
@@ -182,9 +186,7 @@ if not st.session_state.logged_in:
                     st.error("Vui lòng nhập đầy đủ Tên và Email.")
     st.stop() 
 
-# --- GIAO DIỆN CHÍNH (DASHBOARD) ---
-
-# SIDEBAR
+# --- DASHBOARD CHÍNH ---
 with st.sidebar:
     st.title(f"Hi, {st.session_state.user_name} 👋")
     st.caption("Sinh viên Điều dưỡng")
@@ -201,10 +203,9 @@ with st.sidebar:
     st.divider()
     if st.button("Đăng xuất"):
         st.session_state.logged_in = False
-        st.session_state.show_splash = True # Quay về trang chào
+        st.session_state.show_splash = True 
         st.rerun()
 
-# NỘI DUNG CHÍNH
 st.title("👩‍⚕️ LỘ TRÌNH NGHỀ NGHIỆP CÁ NHÂN")
 st.markdown("**Từ Sinh viên mơ hồ ➡️ Ứng viên sáng giá**")
 st.divider()
@@ -257,8 +258,8 @@ with tab1:
         if is_blank:
             st.markdown("""
             <div style="background-color: #e3f2fd; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;">
-                <h3>👋 Chào bạn mới!</h3>
-                <p>Bạn đang ở vạch xuất phát. Hãy bắt đầu từ <b>Giai đoạn 1</b> của lộ trình nhé.</p>
+                <h3 style="color: #000;">👋 Chào bạn mới!</h3>
+                <p style="color: #333;">Bạn đang ở vạch xuất phát. Hãy bắt đầu từ <b>Giai đoạn 1</b> của lộ trình nhé.</p>
             </div>""", unsafe_allow_html=True)
             st.warning("👉 Chuyển sang **Tab 2** để xem việc cần làm ngay.")
         else:
@@ -268,7 +269,7 @@ with tab1:
             elif score < 28: st.warning("🟠 MỨC ĐỘ: TƯƠNG ĐỐI SẴN SÀNG")
             else: st.success("🟢 MỨC ĐỘ: SẴN SÀNG ĐI LÀM")
 
-# --- TAB 2: LỘ TRÌNH (TIẾN ĐỘ %) ---
+# --- TAB 2: LỘ TRÌNH ---
 with tab2:
     st.header("📅 Lộ trình 90 ngày")
     tasks = ["t1_1", "t1_2", "t1_3", "t1_4", "t2_1", "t2_2", "t2_3", "t2_4", "t3_1", "t3_2", "t3_3", "t3_4"]
@@ -283,25 +284,25 @@ with tab2:
         if prog == 100: st.balloons()
     st.divider()
 
-    with st.expander("🌱 Giai đoạn 1(30 ngày đầu): CHUẨN BỊ (Nền tảng)", expanded=True):
+    with st.expander("🌱 Giai đoạn 1 (30 ngày đầu): CHUẨN BỊ (Nền tảng)", expanded=True):
         st.checkbox("Ôn tập kiến thức chuyên khoa", key="t1_1")
         st.checkbox("Thực hành thành thạo kỹ năng cơ bản", key="t1_2")
         st.checkbox("Rèn luyện kỹ năng mềm", key="t1_3")
         st.checkbox("Chuẩn bị hồ sơ (Nháp)", key="t1_4")
 
-    with st.expander("🚀 Giai đoạn 2(30 tiếp theo): TIẾP CẬN"):
+    with st.expander("🚀 Giai đoạn 2 (30 ngày tiếp theo): TIẾP CẬN"):
         st.checkbox("Tìm hiểu quy trình tại BV thực tập", key="t2_1")
         st.checkbox("Hoàn tất chứng chỉ bắt buộc", key="t2_2")
         st.checkbox("Đăng ký khóa học ngắn hạn", key="t2_3")
         st.checkbox("Xin nhận xét từ người hướng dẫn", key="t2_4")
 
-    with st.expander("⭐ Giai đoạn 3(30 ngày cuối): VỀ ĐÍCH"):
+    with st.expander("⭐ Giai đoạn 3 (30 ngày cuối): VỀ ĐÍCH"):
         st.checkbox("Hoàn thiện CV & Hồ sơ", key="t3_1")
         st.checkbox("Luyện phỏng vấn", key="t3_2")
         st.checkbox("Role-play tình huống", key="t3_3")
         st.checkbox("Nộp hồ sơ", key="t3_4")
 
-# --- TAB 3: HỖ TRỢ CV (TIẾN ĐỘ %) ---
+# --- TAB 3: HỖ TRỢ CV ---
 with tab3:
     st.header("📄 Trung tâm Hỗ trợ Hồ sơ")
     cv_tasks = ["c1", "c2", "c3", "c4", "c5", "c6"]
@@ -339,7 +340,7 @@ with tab4:
     st.markdown(f"**Kết quả tìm kiếm: {job_type} tại {area}**")
     st.markdown(f"""
     <div class="job-card">
-        <h3>🏥 Điều dưỡng Đa khoa - {job_type}</h3>
+        <h3>🏥 Điều dưỡng Đa khoa - {job_type} Quận 1</h3>
         <p>📍 <b>Khu vực:</b> {area} | 💰 <b>Lương:</b> Thỏa thuận</p>
         <p>✅ <b>Yêu cầu:</b> Tốt nghiệp CĐ/ĐH, Nhanh nhẹn, Chấp nhận đào tạo lại.</p>
         <button style="background-color: #00ADB5; color: white; border: none; padding: 8px 16px; border-radius: 4px;">Ứng tuyển ngay</button>
@@ -362,4 +363,3 @@ with tab5:
         if st.button("Gửi Góp ý"):
             st.balloons()
             st.success("Cảm ơn bạn!")
-
