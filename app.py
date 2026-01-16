@@ -28,82 +28,92 @@ if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================================================
-# 🔥 SIÊU CSS: GHI ĐÈ BIẾN HỆ THỐNG (Force Light Mode) 🔥
+# 🔥 BỘ CSS "HẠT NHÂN" KHẮC CHẾ DARK MODE IPHONE 🔥
 # =========================================================
 st.markdown("""
     <style>
-    /* 1. ĐỊNH NGHĨA LẠI TOÀN BỘ MÀU SẮC CỦA APP */
-    /* Đây là cách ép Streamlit đổi màu từ gốc rễ */
-    :root {
-        --primary-color: #00ADB5;
-        --background-color: #FFFFFF;
-        --secondary-background-color: #F0F2F6;
-        --text-color: #000000;
-        --font: "sans serif";
-    }
-
-    /* 2. Ép buộc trình duyệt hiểu là Light Mode */
-    @media (prefers-color-scheme: dark) {
-        :root {
-            color-scheme: light;
-        }
-    }
-    
-    /* 3. Ép màu nền và chữ cho toàn bộ trang */
-    .stApp {
+    /* 1. ÉP BUỘC MÀU NỀN CHUNG */
+    :root { color-scheme: light !important; }
+    html, body, .stApp {
         background-color: #FFFFFF !important;
         color: #000000 !important;
     }
-    
-    /* 4. XỬ LÝ CÁC THÀNH PHẦN VĂN BẢN (Header, Paragraph, Label...) */
-    h1, h2, h3, h4, h5, h6, p, span, div, label {
-        color: #000000 !important;
-    }
 
-    /* 5. KHẮC PHỤC LỖI Ô NHẬP LIỆU (Input) TRÊN ĐIỆN THOẠI */
-    /* Ép nền trắng, chữ đen, viền xám */
-    input, textarea, select {
-        color: #000000 !important;
+    /* 2. TẤN CÔNG VÀO Ô NHẬP LIỆU (Input Text) */
+    /* Ép tất cả các thẻ input phải trắng, chữ đen */
+    input, textarea {
         background-color: #FFFFFF !important;
-        -webkit-text-fill-color: #000000 !important; /* Fix iPhone Safari */
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important; /* Fix iPhone */
         caret-color: #000000 !important;
-        border: 1px solid #cccccc !important;
+        border: 1px solid #d3d3d3 !important; /* Viền xám cho dễ nhìn */
     }
-    
-    /* Streamlit Input Wrapper */
-    .stTextInput > div, .stTextArea > div, .stSelectbox > div {
+    /* Container bao quanh input */
+    div[data-baseweb="base-input"] {
+        background-color: #FFFFFF !important;
+        border-color: #d3d3d3 !important;
+    }
+
+    /* 3. TẤN CÔNG VÀO THANH CHỌN (Selectbox/Dropdown) - Cái đang bị đen thui */
+    div[data-baseweb="select"] > div {
         background-color: #FFFFFF !important;
         color: #000000 !important;
+        border: 1px solid #d3d3d3 !important;
+    }
+    /* Chữ bên trong thanh chọn */
+    div[data-baseweb="select"] span {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+    }
+    /* Menu xổ xuống (Popover) */
+    div[data-baseweb="popover"], div[data-baseweb="menu"] {
+        background-color: #FFFFFF !important;
+    }
+    /* Các lựa chọn bên trong menu */
+    li[data-baseweb="menu-item"] {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
     }
 
-    /* 6. SIDEBAR */
-    [data-testid="stSidebar"] {
-        background-color: #F0F2F6 !important;
+    /* 4. XỬ LÝ CHECKBOX (Đang bị chìm) */
+    label[data-baseweb="checkbox"] p, label[data-baseweb="checkbox"] div {
+        color: #000000 !important;
     }
-    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div {
+    
+    /* 5. CÁC NHÃN (LABEL) PHÍA TRÊN Ô NHẬP */
+    .stTextInput label, .stSelectbox label, .stTextArea label, p {
         color: #000000 !important;
     }
 
-    /* 7. ẨN CÁC NÚT THỪA */
+    /* 6. ẨN CÁC NÚT THỪA */
     .stAppDeployButton {display: none;}
     [data-testid="stToolbar"] {visibility: hidden;} 
     [data-testid="stHeader"] {
         visibility: visible !important;
-        background-color: rgba(255, 255, 255, 0) !important;
-        z-index: 999;
+        background-color: rgba(0,0,0,0);
+        z-index: 1000;
     }
+    
+    /* 7. Sidebar */
+    [data-testid="stSidebar"] { background-color: #F0F2F6 !important; }
+    [data-testid="stSidebar"] * { color: #000000 !important; }
 
-    /* 8. RESET NÚT BẤM (Tránh bị dính css của Splash Screen) */
+    /* 8. Reset Nút bấm thường (Tránh bị dính style của Splash Screen) */
     div.stButton > button:first-child {
         position: static;
         transform: none;
         width: auto !important;
         display: inline-flex !important;
-        color: #FFFFFF !important; /* Chữ nút bấm màu trắng */
-        background-color: #00ADB5 !important; /* Nền nút xanh */
+        color: #FFFFFF !important;
+        background-color: #00ADB5 !important;
+        border: none !important;
     }
-    
-    /* Riêng nút ở Splash Screen sẽ được style lại ở dưới */
+    /* Nút chọn file/ảnh */
+    button[data-testid="stBaseButton-secondary"] {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #ccc !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -130,17 +140,16 @@ if st.session_state.show_splash:
         <style>
         [data-testid="stHeader"] {{visibility: hidden !important;}}
         [data-testid="stSidebar"] {{display: none !important;}}
-        
         .stApp {{ {bg_style} }}
         
-        /* STYLE RIÊNG CHO NÚT BẤM SPLASH SCREEN */
+        /* STYLE NÚT BẤM TRANG CHÀO */
         div.stButton > button:first-child {{
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
             background-color: rgba(255, 255, 255, 0.95) !important;
-            color: #00ADB5 !important; /* Chữ xanh */
+            color: #00ADB5 !important;
             font-size: 35px !important;
             font-weight: 900 !important;
             border: 4px solid #00ADB5 !important;
@@ -148,11 +157,6 @@ if st.session_state.show_splash:
             padding: 20px 40px !important;
             box-shadow: 0px 10px 30px rgba(0,0,0,0.3) !important;
             z-index: 9999;
-        }}
-        div.stButton > button:first-child:hover {{
-             color: #ff4b4b !important;
-             border-color: #ff4b4b !important;
-             transform: translate(-50%, -50%) scale(1.1) !important;
         }}
         </style>
     """, unsafe_allow_html=True)
@@ -185,8 +189,8 @@ if not st.session_state.logged_in:
             st.markdown("### 📝 Đăng ký nhận Bộ công cụ")
             st.write("Nhập thông tin để bắt đầu lộ trình cá nhân hóa của bạn.")
             
-            # CSS đặc biệt cho ô input (Ghi đè lần nữa cho chắc)
-            st.markdown("""<style>input {color: black !important; -webkit-text-fill-color: black !important; background: white !important;}</style>""", unsafe_allow_html=True)
+            # CSS đặc biệt cho ô nhập liệu (backup)
+            st.markdown("""<style>input {background-color: white !important; color: black !important;}</style>""", unsafe_allow_html=True)
 
             name = st.text_input("Họ và tên sinh viên:")
             email = st.text_input("Email (Gmail):")
@@ -227,7 +231,7 @@ st.title("👩‍⚕️ LỘ TRÌNH NGHỀ NGHIỆP CÁ NHÂN")
 st.markdown("**Từ Sinh viên mơ hồ ➡️ Ứng viên sáng giá**")
 st.divider()
 
-# CSS cho Card & Tab bên trong Dashboard (Để đảm bảo chữ đen)
+# CSS cho Card & Tab (Đảm bảo nền sáng)
 st.markdown("""
 <style>
 .job-card { 
@@ -237,12 +241,7 @@ st.markdown("""
     margin-bottom: 10px; 
     border-left: 5px solid #00ADB5;
 }
-.job-card h3, .job-card p, .job-card div {
-    color: #000000 !important;
-}
-.cv-tip {
-    background-color: #E8F5E9 !important;
-}
+.job-card * { color: #000000 !important; }
 </style>
 """, unsafe_allow_html=True)
 
