@@ -28,37 +28,46 @@ if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================================================
-# PHẦN CSS QUAN TRỌNG: KHẮC PHỤC LỖI DARK MODE & LÀM ĐẸP
+# 🔥 CSS KHẮC CHẾ DARK MODE (ĐOẠN MỚI THÊM) 🔥
 # =========================================================
 st.markdown("""
     <style>
-    /* 1. ÉP BUỘC TRÌNH DUYỆT DÙNG CHẾ ĐỘ SÁNG (Cực quan trọng cho Mobile) */
+    /* 1. ÉP BUỘC TRÌNH DUYỆT HIỂU LÀ CHẾ ĐỘ SÁNG (QUAN TRỌNG NHẤT CHO ĐIỆN THOẠI) */
     :root {
         color-scheme: light !important;
     }
     
-    /* 2. Ép buộc màu chữ và màu nền toàn cục */
+    /* 2. Ép toàn bộ nền và chữ về màu sáng */
     html, body, [class*="css"] {
         background-color: #FFFFFF !important;
-        color: #000000 !important; /* Chữ đen tuyệt đối */
+        color: #000000 !important;
     }
     
-    /* 3. Xử lý Ô Nhập Liệu (Input) để không bị chữ trắng/nền trắng */
-    .stTextInput input, .stTextArea textarea {
-        color: #000000 !important;       /* Chữ khi gõ vào màu đen */
-        background-color: #ffffff !important; /* Nền ô màu trắng */
-        -webkit-text-fill-color: #000000 !important; /* Fix cho iPhone/Safari */
-        caret-color: #000000 !important; /* Dấu nháy màu đen */
+    /* 3. FIX LỖI Ô NHẬP LIỆU TRÊN IPHONE (QUAN TRỌNG) */
+    /* iPhone hay tự biến chữ trong ô input thành màu trắng khi bật Dark Mode -> Phải ép lại */
+    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        -webkit-text-fill-color: #000000 !important; /* Lệnh riêng cho Safari/iPhone */
+        caret-color: #000000 !important; /* Màu con trỏ chuột khi gõ */
         border: 1px solid #ccc !important;
     }
     
-    /* 4. Xử lý Nhãn (Label) của ô nhập liệu */
+    /* 4. Fix màu chữ của nhãn (Label) */
     .stTextInput label, .stTextArea label, .stSelectbox label {
-        color: #31333F !important;
+        color: #333333 !important;
         font-weight: 600 !important;
     }
     
-    /* 5. Ẩn nút Deploy và Menu GitHub */
+    /* 5. Sidebar trên mobile */
+    [data-testid="stSidebar"] { 
+        background-color: #F0F2F6 !important; 
+    }
+    [data-testid="stSidebar"] * {
+        color: #000000 !important; 
+    }
+
+    /* 6. Ẩn nút Deploy thừa thãi */
     .stAppDeployButton {display: none;}
     [data-testid="stToolbar"] {visibility: hidden;} 
     [data-testid="stHeader"] {
@@ -66,23 +75,12 @@ st.markdown("""
         background-color: rgba(0,0,0,0);
         z-index: 1000;
     }
-
-    /* 6. Sidebar trên mobile */
-    [data-testid="stSidebar"] { 
-        width: 300px !important;
-        background-color: #F0F2F6 !important; 
-    }
-    [data-testid="stSidebar"] * {
-        color: #000000 !important; /* Chữ trong sidebar màu đen */
-    }
-
-    /* 7. CSS làm đẹp khác (Card, Tab...) */
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] { height: 50px; font-weight: 600; }
-    .job-card { padding: 15px; border-radius: 8px; background-color: #f0f2f6; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
-    .job-card * { color: #000000 !important; } /* Chữ trong card màu đen */
     
-    /* 8. Reset nút bấm thường */
+    /* 7. Các CSS trang trí khác */
+    .job-card { color: #000 !important; background-color: #f0f2f6; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
+    .job-card * { color: #000 !important; }
+    
+    /* Reset nút bấm */
     div.stButton > button:first-child {
         position: static;
         transform: none;
@@ -93,11 +91,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================
-# PHẦN 1: TRANG CHÀO (SPLASH SCREEN)
+# PHẦN 1: TRANG CHÀO (DÙNG ẢNH MỚI CỦA BẠN)
 # =========================================================
 if st.session_state.show_splash:
     
-    # Sử dụng tên file ảnh bạn vừa cung cấp
+    # Tên file ảnh bạn vừa gửi
     img_name = "z7434843704046_810c2c91c80bba353a689637e23727d7.jpg"
     img_base64 = get_base64_of_bin_file(img_name)
     
@@ -110,18 +108,16 @@ if st.session_state.show_splash:
         """
     else:
         bg_style = "background-color: #ffffff;"
-        st.error(f"⚠️ Không tìm thấy ảnh '{img_name}'. Hãy kiểm tra lại thư mục!")
+        st.error(f"⚠️ Không tìm thấy ảnh '{img_name}'. Kiểm tra lại thư mục!")
 
     st.markdown(f"""
         <style>
         [data-testid="stHeader"] {{visibility: hidden !important;}}
         [data-testid="stSidebar"] {{display: none !important;}}
         
-        .stApp {{
-            {bg_style}
-        }}
+        .stApp {{ {bg_style} }}
         
-        /* CĂN GIỮA NÚT BẤM SPLASH SCREEN */
+        /* NÚT BẤM GIỮA MÀN HÌNH */
         div.stButton > button:first-child {{
             position: fixed !important;
             top: 50% !important;
@@ -168,8 +164,8 @@ if not st.session_state.logged_in:
             st.markdown("### 📝 Đăng ký nhận Bộ công cụ")
             st.write("Nhập thông tin để bắt đầu lộ trình cá nhân hóa của bạn.")
             
-            # CSS đặc biệt cho input form đăng nhập
-            st.markdown("""<style>input {color: black !important;}</style>""", unsafe_allow_html=True)
+            # Fix màu chữ input lần nữa cho chắc
+            st.markdown("""<style>input {color: black !important; -webkit-text-fill-color: black !important;}</style>""", unsafe_allow_html=True)
 
             name = st.text_input("Họ và tên sinh viên:")
             email = st.text_input("Email (Gmail):")
@@ -269,7 +265,7 @@ with tab1:
             elif score < 28: st.warning("🟠 MỨC ĐỘ: TƯƠNG ĐỐI SẴN SÀNG")
             else: st.success("🟢 MỨC ĐỘ: SẴN SÀNG ĐI LÀM")
 
-# --- TAB 2: LỘ TRÌNH ---
+# --- TAB 2: LỘ TRÌNH (GIỮ NGUYÊN 30 NGÀY CỦA BẠN) ---
 with tab2:
     st.header("📅 Lộ trình 90 ngày")
     tasks = ["t1_1", "t1_2", "t1_3", "t1_4", "t2_1", "t2_2", "t2_3", "t2_4", "t3_1", "t3_2", "t3_3", "t3_4"]
