@@ -197,7 +197,7 @@ with tab1:
 
 # --- TAB 2: LỘ TRÌNH (CÓ THANH TIẾN ĐỘ) ---
 with tab2:
-    st.header("📅 Lộ trình Cá nhân hóa")
+    st.header("📅 Lộ trình 90 ngày")
     st.write("Kế hoạch hành động từng bước để giảm lo âu.")
 
     # TÍNH TOÁN TIẾN ĐỘ LỘ TRÌNH
@@ -221,19 +221,19 @@ with tab2:
         if progress_percent == 100: st.success("🏆 HOÀN THÀNH!")
     st.divider()
 
-    with st.expander("🌱 Giai đoạn 1: CHUẨN BỊ (Nền tảng)", expanded=True):
+    with st.expander("🌱 Giai đoạn 1(30 ngày đầu): CHUẨN BỊ (Nền tảng)", expanded=True):
         st.checkbox("Ôn tập kiến thức chuyên khoa", key="t1_1")
         st.checkbox("Thực hành thành thạo các kỹ năng cơ bản", key="t1_2")
         st.checkbox("Rèn luyện kỹ năng mềm", key="t1_3")
         st.checkbox("Chuẩn bị hồ sơ cá nhân (Nháp)", key="t1_4")
 
-    with st.expander("🚀 Giai đoạn 2: TIẾP CẬN VIỆC LÀM"):
+    with st.expander("🚀 Giai đoạn 2(30 ngày tiếp theo): TIẾP CẬN VIỆC LÀM"):
         st.checkbox("Tìm hiểu quy trình làm việc tại BV thực tập", key="t2_1")
         st.checkbox("Hoàn tất các chứng chỉ bắt buộc", key="t2_2")
         st.checkbox("Đăng ký 1 khóa học ngắn hạn mũi nhọn", key="t2_3")
         st.checkbox("Xin nhận xét từ người hướng dẫn", key="t2_4")
 
-    with st.expander("⭐ Giai đoạn 3: SẴN SÀNG ỨNG TUYỂN"):
+    with st.expander("⭐ Giai đoạn 3(30 ngày cuối): SẴN SÀNG ỨNG TUYỂN"):
         st.checkbox("Hoàn thiện CV & Hồ sơ xin việc", key="t3_1")
         st.checkbox("Luyện bộ câu hỏi phỏng vấn", key="t3_2")
         st.checkbox("Role-play: Xử lý tình huống", key="t3_3")
