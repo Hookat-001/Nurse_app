@@ -28,74 +28,90 @@ if 'user_name' not in st.session_state:
     st.session_state.user_name = ""
 
 # =========================================================
-# 🔥 CSS KHẮC CHẾ DARK MODE (ĐOẠN MỚI THÊM) 🔥
+# 🔥 SIÊU CSS: GHI ĐÈ BIẾN HỆ THỐNG (Force Light Mode) 🔥
 # =========================================================
 st.markdown("""
     <style>
-    /* 1. ÉP BUỘC TRÌNH DUYỆT HIỂU LÀ CHẾ ĐỘ SÁNG (QUAN TRỌNG NHẤT CHO ĐIỆN THOẠI) */
+    /* 1. ĐỊNH NGHĨA LẠI TOÀN BỘ MÀU SẮC CỦA APP */
+    /* Đây là cách ép Streamlit đổi màu từ gốc rễ */
     :root {
-        color-scheme: light !important;
+        --primary-color: #00ADB5;
+        --background-color: #FFFFFF;
+        --secondary-background-color: #F0F2F6;
+        --text-color: #000000;
+        --font: "sans serif";
+    }
+
+    /* 2. Ép buộc trình duyệt hiểu là Light Mode */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            color-scheme: light;
+        }
     }
     
-    /* 2. Ép toàn bộ nền và chữ về màu sáng */
-    html, body, [class*="css"] {
+    /* 3. Ép màu nền và chữ cho toàn bộ trang */
+    .stApp {
         background-color: #FFFFFF !important;
         color: #000000 !important;
     }
     
-    /* 3. FIX LỖI Ô NHẬP LIỆU TRÊN IPHONE (QUAN TRỌNG) */
-    /* iPhone hay tự biến chữ trong ô input thành màu trắng khi bật Dark Mode -> Phải ép lại */
-    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
+    /* 4. XỬ LÝ CÁC THÀNH PHẦN VĂN BẢN (Header, Paragraph, Label...) */
+    h1, h2, h3, h4, h5, h6, p, span, div, label {
         color: #000000 !important;
-        background-color: #ffffff !important;
-        -webkit-text-fill-color: #000000 !important; /* Lệnh riêng cho Safari/iPhone */
-        caret-color: #000000 !important; /* Màu con trỏ chuột khi gõ */
-        border: 1px solid #ccc !important;
-    }
-    
-    /* 4. Fix màu chữ của nhãn (Label) */
-    .stTextInput label, .stTextArea label, .stSelectbox label {
-        color: #333333 !important;
-        font-weight: 600 !important;
-    }
-    
-    /* 5. Sidebar trên mobile */
-    [data-testid="stSidebar"] { 
-        background-color: #F0F2F6 !important; 
-    }
-    [data-testid="stSidebar"] * {
-        color: #000000 !important; 
     }
 
-    /* 6. Ẩn nút Deploy thừa thãi */
+    /* 5. KHẮC PHỤC LỖI Ô NHẬP LIỆU (Input) TRÊN ĐIỆN THOẠI */
+    /* Ép nền trắng, chữ đen, viền xám */
+    input, textarea, select {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
+        -webkit-text-fill-color: #000000 !important; /* Fix iPhone Safari */
+        caret-color: #000000 !important;
+        border: 1px solid #cccccc !important;
+    }
+    
+    /* Streamlit Input Wrapper */
+    .stTextInput > div, .stTextArea > div, .stSelectbox > div {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+
+    /* 6. SIDEBAR */
+    [data-testid="stSidebar"] {
+        background-color: #F0F2F6 !important;
+    }
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] div {
+        color: #000000 !important;
+    }
+
+    /* 7. ẨN CÁC NÚT THỪA */
     .stAppDeployButton {display: none;}
     [data-testid="stToolbar"] {visibility: hidden;} 
     [data-testid="stHeader"] {
         visibility: visible !important;
-        background-color: rgba(0,0,0,0);
-        z-index: 1000;
+        background-color: rgba(255, 255, 255, 0) !important;
+        z-index: 999;
     }
-    
-    /* 7. Các CSS trang trí khác */
-    .job-card { color: #000 !important; background-color: #f0f2f6; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #00ADB5; }
-    .job-card * { color: #000 !important; }
-    
-    /* Reset nút bấm */
+
+    /* 8. RESET NÚT BẤM (Tránh bị dính css của Splash Screen) */
     div.stButton > button:first-child {
         position: static;
         transform: none;
         width: auto !important;
         display: inline-flex !important;
+        color: #FFFFFF !important; /* Chữ nút bấm màu trắng */
+        background-color: #00ADB5 !important; /* Nền nút xanh */
     }
+    
+    /* Riêng nút ở Splash Screen sẽ được style lại ở dưới */
     </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
-# PHẦN 1: TRANG CHÀO (DÙNG ẢNH MỚI CỦA BẠN)
+# PHẦN 1: TRANG CHÀO (SPLASH SCREEN)
 # =========================================================
 if st.session_state.show_splash:
     
-    # Tên file ảnh bạn vừa gửi
     img_name = "z7434843704046_810c2c91c80bba353a689637e23727d7.jpg"
     img_base64 = get_base64_of_bin_file(img_name)
     
@@ -108,7 +124,7 @@ if st.session_state.show_splash:
         """
     else:
         bg_style = "background-color: #ffffff;"
-        st.error(f"⚠️ Không tìm thấy ảnh '{img_name}'. Kiểm tra lại thư mục!")
+        st.error(f"⚠️ Không tìm thấy ảnh '{img_name}'.")
 
     st.markdown(f"""
         <style>
@@ -117,14 +133,14 @@ if st.session_state.show_splash:
         
         .stApp {{ {bg_style} }}
         
-        /* NÚT BẤM GIỮA MÀN HÌNH */
+        /* STYLE RIÊNG CHO NÚT BẤM SPLASH SCREEN */
         div.stButton > button:first-child {{
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
             background-color: rgba(255, 255, 255, 0.95) !important;
-            color: #00ADB5 !important;
+            color: #00ADB5 !important; /* Chữ xanh */
             font-size: 35px !important;
             font-weight: 900 !important;
             border: 4px solid #00ADB5 !important;
@@ -132,6 +148,11 @@ if st.session_state.show_splash:
             padding: 20px 40px !important;
             box-shadow: 0px 10px 30px rgba(0,0,0,0.3) !important;
             z-index: 9999;
+        }}
+        div.stButton > button:first-child:hover {{
+             color: #ff4b4b !important;
+             border-color: #ff4b4b !important;
+             transform: translate(-50%, -50%) scale(1.1) !important;
         }}
         </style>
     """, unsafe_allow_html=True)
@@ -164,8 +185,8 @@ if not st.session_state.logged_in:
             st.markdown("### 📝 Đăng ký nhận Bộ công cụ")
             st.write("Nhập thông tin để bắt đầu lộ trình cá nhân hóa của bạn.")
             
-            # Fix màu chữ input lần nữa cho chắc
-            st.markdown("""<style>input {color: black !important; -webkit-text-fill-color: black !important;}</style>""", unsafe_allow_html=True)
+            # CSS đặc biệt cho ô input (Ghi đè lần nữa cho chắc)
+            st.markdown("""<style>input {color: black !important; -webkit-text-fill-color: black !important; background: white !important;}</style>""", unsafe_allow_html=True)
 
             name = st.text_input("Họ và tên sinh viên:")
             email = st.text_input("Email (Gmail):")
@@ -206,33 +227,45 @@ st.title("👩‍⚕️ LỘ TRÌNH NGHỀ NGHIỆP CÁ NHÂN")
 st.markdown("**Từ Sinh viên mơ hồ ➡️ Ứng viên sáng giá**")
 st.divider()
 
+# CSS cho Card & Tab bên trong Dashboard (Để đảm bảo chữ đen)
+st.markdown("""
+<style>
+.job-card { 
+    background-color: #F0F2F6 !important; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 10px; 
+    border-left: 5px solid #00ADB5;
+}
+.job-card h3, .job-card p, .job-card div {
+    color: #000000 !important;
+}
+.cv-tip {
+    background-color: #E8F5E9 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # 5 TAB CHỨC NĂNG
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 1. Đánh giá", 
-    "📅 2. Lộ trình", 
-    "📄 3. Hỗ trợ CV", 
-    "🏥 4. Việc làm", 
-    "💬 5. Mentor"
+    "📊 1. Đánh giá", "📅 2. Lộ trình", "📄 3. Hỗ trợ CV", "🏥 4. Việc làm", "💬 5. Mentor"
 ])
 
 # --- TAB 1: ĐÁNH GIÁ ---
 with tab1:
     st.header("📊 Đánh giá mức độ sẵn sàng đi làm")
     st.info("💡 Lưu ý: Nếu bạn cảm thấy mình chưa có gì cả, đừng lo lắng. App sẽ hướng dẫn bạn từ đầu.")
-    
     with st.form("assessment_form"):
         c1, c2 = st.columns(2)
         with c1:
             st.subheader("Năng lực Chuyên môn")
             score_knowledge = st.slider("Tự tin về Kiến thức (0-10):", 0, 10, 3)
-            
             st.write("Kỹ năng thực hành ĐÃ LÀM ĐƯỢC:")
             has_no_skills = st.checkbox("❌ Tôi chưa thạo kỹ năng nào")
             if not has_no_skills:
                 skills = st.multiselect("Chọn kỹ năng:", 
                     ["Tiêm truyền / Lấy ven", "Đặt thông tiểu", "Thay băng", "CPR", "Sử dụng máy y tế"], label_visibility="collapsed")
             else: skills = [] 
-            
             st.write("Kỹ năng mềm:")
             soft_skills = st.multiselect("Chọn kỹ năng:", ["Giao tiếp", "Làm việc nhóm", "Quản lý cảm xúc", "Giải quyết vấn đề"])
 
@@ -250,13 +283,8 @@ with tab1:
     if submitted:
         st.divider()
         is_blank = (score_knowledge < 3) and (len(skills) == 0) and (len(certs) == 0)
-        
         if is_blank:
-            st.markdown("""
-            <div style="background-color: #e3f2fd; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;">
-                <h3 style="color: #000;">👋 Chào bạn mới!</h3>
-                <p style="color: #333;">Bạn đang ở vạch xuất phát. Hãy bắt đầu từ <b>Giai đoạn 1</b> của lộ trình nhé.</p>
-            </div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="background-color: #e3f2fd; padding: 20px; border-radius: 10px; border-left: 5px solid #2196f3;"><h3 style="color: #000;">👋 Chào bạn mới!</h3><p style="color: #000;">Bạn đang ở vạch xuất phát. Hãy bắt đầu từ <b>Giai đoạn 1</b> của lộ trình nhé.</p></div>""", unsafe_allow_html=True)
             st.warning("👉 Chuyển sang **Tab 2** để xem việc cần làm ngay.")
         else:
             score = score_knowledge + len(skills) + len(soft_skills) + len(certs)*2 + score_mindset
@@ -265,13 +293,12 @@ with tab1:
             elif score < 28: st.warning("🟠 MỨC ĐỘ: TƯƠNG ĐỐI SẴN SÀNG")
             else: st.success("🟢 MỨC ĐỘ: SẴN SÀNG ĐI LÀM")
 
-# --- TAB 2: LỘ TRÌNH (GIỮ NGUYÊN 30 NGÀY CỦA BẠN) ---
+# --- TAB 2: LỘ TRÌNH ---
 with tab2:
     st.header("📅 Lộ trình 90 ngày")
     tasks = ["t1_1", "t1_2", "t1_3", "t1_4", "t2_1", "t2_2", "t2_3", "t2_4", "t3_1", "t3_2", "t3_3", "t3_4"]
     done = sum(1 for t in tasks if st.session_state.get(t, False))
     prog = int((done/len(tasks))*100)
-    
     col_p1, col_p2 = st.columns([3, 1])
     with col_p1:
         st.write(f"**Tiến độ tổng thể:** {prog}%")
@@ -303,7 +330,6 @@ with tab3:
     st.header("📄 Trung tâm Hỗ trợ Hồ sơ")
     cv_tasks = ["c1", "c2", "c3", "c4", "c5", "c6"]
     cv_prog = int((sum(1 for t in cv_tasks if st.session_state.get(t, False)) / 6) * 100)
-    
     st.markdown(f"**Hoàn thiện hồ sơ: {cv_prog}%**")
     st.progress(cv_prog)
     if cv_prog == 100: st.success("🎉 Đã đầy đủ hồ sơ!")
@@ -331,7 +357,6 @@ with tab4:
         area = st.selectbox("Khu vực mong muốn:", ["TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ"])
     with f_col2:
         job_type = st.selectbox("Loại hình cơ sở:", ["Bệnh viện Công", "Bệnh viện Tư", "Phòng khám Đa khoa", "Chăm sóc tại nhà"])
-    
     st.divider()
     st.markdown(f"**Kết quả tìm kiếm: {job_type} tại {area}**")
     st.markdown(f"""
